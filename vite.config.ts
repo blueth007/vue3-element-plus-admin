@@ -15,11 +15,11 @@ import { svgBuilder } from "./src/plugins/svgBuilder";
 export default defineConfig({
   server: {
     proxy: {
-      "/api": {
-        target: "http://localhost:5173",
+      "/vue3-element-admin": {
+        target: "https://www.fastmock.site/mock/f46350266007e9680ff6459f7412bd60/",
         changeOrigin: true,
         ws: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path) => path.replace(/^\/vue3-element-admin/, "vue3_admin"),
       },
     },
   },

@@ -8,10 +8,10 @@ import "@iconify/iconify";
 import "./permission";
 
 const app = createApp(App);
-
-if (import.meta.env.MODE == "development") {
-  //   const { mockXHR } = require("../mock");
-  mockXHR();
-}
+// if you don't  use mock,this way is use fastmock interface. 
+// if (import.meta.env.MODE == "development") {
+//   //   const { mockXHR } = require("../mock");
+//   mockXHR();
+// }
 
 app.use(createPinia()).use(router).mount("#app");
