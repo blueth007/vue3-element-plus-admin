@@ -1,0 +1,40 @@
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+import { useUserStore } from "./user";
+import { useTagsViewStore } from "@/store/tagsView";
+import { usePermissionStore } from "@/store/permission";
+
+export const useStore = defineStore("store2", () => {
+  const permission = usePermissionStore();
+  const user = useUserStore();
+  const tagsView = useTagsViewStore();
+
+  const roles = computed(() => {
+    return user.roles;
+  });
+  const permission_routes = computed(() => {
+    return permission.routes;
+  });
+
+  const visitedViews = computed(() => {
+    return tagsView.visitedViews;
+  });
+  const cachedViews = computed(() => {
+    return tagsView.cachedViews;
+  });
+  const token = computed(() => user.token);
+  const avatar = computed(() => user.avatar);
+  const name = computed(() => user.name);
+  const introduction = computed(() => user.introduction);
+
+  return {
+    roles,
+    token,
+    avatar,
+    name,
+    introduction,
+    permission_routes,
+    visitedViews,
+    cachedViews,
+  };
+});

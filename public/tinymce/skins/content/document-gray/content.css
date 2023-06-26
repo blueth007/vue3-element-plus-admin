@@ -1,0 +1,22 @@
+/**
+* < .mce-content-body >
+*        <section>
+*            <p>*****</p>
+*/
+.mce-content-body {
+  background: gray;
+  padding: 30px;
+  padding-bottom: 0px;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.section {
+  padding: 72pt 90pt;
+  width: 595.3pt;
+  min-height: 841.9pt;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 30px;
+}

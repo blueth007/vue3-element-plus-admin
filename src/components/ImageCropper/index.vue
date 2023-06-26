@@ -1,0 +1,1515 @@
+<template>
+    <div v-show="value" class="vue-image-crop-upload">
+        <div class="vicp-wrap">
+            <div class="vicp-close" @click="off">
+                <i class="vicp-icon4" />
+            </div>
+
+            <div v-show="step == 1" class="vicp-step1">
+                <div class="vicp-drop-area" @dragleave="preventDefault" @dragover="preventDefault"
+                    @dragenter="preventDefault" @click="handleClick" @drop="handleChange">
+                    <i v-show="loading != 1" class="vicp-icon1">
+                        <i class="vicp-icon1-arrow" />
+                        <i class="vicp-icon1-body" />
+                        <i class="vicp-icon1-bottom" />
+                    </i>
+                    <span v-show="loading !== 1" class="vicp-hint">{{ lang.hint }}</span>
+                    <span v-show="!isSupported" class="vicp-no-supported-hint">{{ lang.noSupported }}</span>
+                    <input v-show="false" accept="image/*" v-if="step == 1" ref="fileinput" type="file"
+                        @change="handleChange" />
+                </div>
+                <div v-show="hasError" class="vicp-error">
+                    <i class="vicp-icon2" />
+                    {{ errorMsg }}
+                </div>
+                <div class="vicp-operate">
+                    <a @click="off" @mousedown="ripple">{{ lang.btn.off }}</a>
+                </div>
+            </div>
+
+            <div v-if="step == 2" class="vicp-step2">
+                <div class="vicp-crop">
+                    <div v-show="true" class="vicp-crop-left">
+                        <div class="vicp-img-container">
+                            <img ref="img" :src="sourceImgUrl" :style="sourceImgStyle" class="vicp-img" draggable="false"
+                                @drag="preventDefault" @dragstart="preventDefault" @dragend="preventDefault"
+                                @dragleave="preventDefault" @dragover="preventDefault" @dragenter="preventDefault"
+                                @drop="preventDefault" @touchstart="imgStartMove" @touchmove="imgMove" @touchend="createImg"
+                                @touchcancel="createImg" @mousedown="imgStartMove" @mousemove="imgMove" @mouseup="createImg"
+                                @mouseout="createImg" />
+                            <div :style="sourceImgShadeStyle" class="vicp-img-shade vicp-img-shade-1" />
+                            <div :style="sourceImgShadeStyle" class="vicp-img-shade vicp-img-shade-2" />
+                        </div>
+
+                        <div class="vicp-range">
+                            <input :value="scale.range" type="range" step="1" min="0" max="100" @input="zoomChange" />
+                            <i class="vicp-icon5" @mousedown="startZoomSub" @mouseout="endZoomSub" @mouseup="endZoomSub" />
+                            <i class="vicp-icon6" @mousedown="startZoomAdd" @mouseout="endZoomAdd" @mouseup="endZoomAdd" />
+                        </div>
+
+                        <div v-if="!noRotate" class="vicp-rotate">
+                            <i @mousedown="startRotateLeft" @mouseout="endRotate" @mouseup="endRotate">↺</i>
+                            <i @mousedown="startRotateRight" @mouseout="endRotate" @mouseup="endRotate">↻</i>
+                        </div>
+                    </div>
+                    <div v-show="true" class="vicp-crop-right">
+                        <div class="vicp-preview">
+                            <div v-if="!noSquare" class="vicp-preview-item">
+                                <img :src="createImgUrl" :style="previewStyle" />
+                                <span>{{ lang.preview }}</span>
+                            </div>
+                            <div v-if="!noCircle" class="vicp-preview-item vicp-preview-item-circle">
+                                <img :src="createImgUrl" :style="previewStyle" />
+                                <span>{{ lang.preview }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="vicp-operate">
+                    <a @click="setStep(1)" @mousedown="ripple">{{ lang.btn.back }}</a>
+                    <a class="vicp-operate-btn" @click="prepareUpload" @mousedown="ripple">{{ lang.btn.save }}</a>
+                </div>
+                <p>img's max-width and tailwind css has confilct 有冲突</p>
+            </div>
+
+            <div v-if="step == 3" class="vicp-step3">
+                <div class="vicp-upload">
+                    <span v-show="loading === 1" class="vicp-loading">{{ lang.loading }}</span>
+                    <div class="vicp-progress-wrap">
+                        <span v-show="loading === 1" :style="progressStyle" class="vicp-progress" />
+                    </div>
+                    <div v-show="hasError" class="vicp-error">
+                        <i class="vicp-icon2" />
+                        {{ errorMsg }}
+                    </div>
+                    <div v-show="loading === 2" class="vicp-success">
+                        <i class="vicp-icon3" />
+                        {{ lang.success }}
+                    </div>
+                </div>
+                <div class="vicp-operate">
+                    <a @click="setStep(2)" @mousedown="ripple">{{ lang.btn.back }}</a>
+                    <a @click="off" @mousedown="ripple">{{ lang.btn.close }}</a>
+                </div>
+            </div>
+            <canvas v-show="false" ref="canvas" :width="width" :height="height" />
+        </div>
+
+    </div>
+</template>
+
+<script setup lang="ts">
+import request from "@/utils/request";
+import language from "./utils/language";
+import mimes from "./utils/mimes";
+import data2blob from "./utils/data2blob";
+import effectRipple from "./utils/effectRipple";
+import { computed, onUnmounted, reactive, ref, toRefs, watch } from "vue";
+
+const props = defineProps({
+    field: {
+        type: String,
+        default: "avatar",
+    },
+    ki: {
+        type: Number,
+        default: 0,
+    },
+    value: {
+        type: Boolean,
+        default: true,
+    },
+    url: {
+        type: String,
+        default: "",
+    },
+    params: {
+        type: Object,
+        default: null,
+    },
+    headers: {
+        type: Object,
+        default: null,
+    },
+    width: {
+        type: Number,
+        default: 200,
+    },
+    height: {
+        type: Number,
+        default: 200,
+    },
+    noRotate: {
+        type: Boolean,
+        default: true,
+    },
+    noCircle: {
+        type: Boolean,
+        default: false,
+    },
+    noSquare: {
+        type: Boolean,
+        default: false,
+    },
+    maxSize: {
+        type: Number,
+        default: 10240,
+    },
+    langType: {
+        type: String,
+        default: "zh",
+    },
+    langExt: {
+        type: Object,
+        default: null,
+    },
+    imgFormat: {
+        type: String,
+        default: "png",
+    },
+    withCredentials: {
+        type: Boolean,
+        default: false,
+    },
+});
+
+const emit = defineEmits(["input", "close", "crop-success", "crop-upload-success", "crop-upload-fail"]);
+const fileinput = ref<HTMLInputElement>();
+const canvas = ref<HTMLCanvasElement>();
+const { langType, langExt, width, height } = toRefs(props);
+const imgFormat = ref(props.imgFormat);
+let isSupported = true;
+const allowImgFormat = ["jpg", "png", 'gif'];
+const tempImgFormat = allowImgFormat.indexOf(imgFormat.value) === -1 ? "jpg" : imgFormat.value;
+const lang = language[langType.value] ? language[langType.value] : language["en"];
+const mime = mimes[tempImgFormat];
+
+// 规范图片格式
+imgFormat.value = tempImgFormat;
+
+if (langExt) {
+    Object.assign(lang, langExt.value);
+}
+if (typeof FormData !== "function") {
+    isSupported = false;
+}
+
+const data = reactive<{ [key: string]: any, sourceImg: HTMLImageElement | null }>({
+    // 图片的mime
+    mime,
+    // 语言包
+    lang,
+    // 浏览器是否支持该控件
+    isSupported,
+    // 浏览器是否支持触屏事件
+    isSupportTouch: document.hasOwnProperty("ontouchstart"),
+    // 步骤
+    step: 1, // 1选择文件 2剪裁 3上传
+    // 上传状态及进度
+    loading: 0, // 0未开始 1正在 2成功 3错误
+    progress: 0,
+    // 是否有错误及错误信息
+    hasError: false,
+    errorMsg: "",
+    // 需求图宽高比
+    ratio: width.value / height.value,
+    // 原图地址、生成图片地址
+    sourceImg: null,
+    sourceImgUrl: "",
+    createImgUrl: "",
+    // 原图片拖动事件初始值
+    sourceImgMouseDown: {
+        on: false,
+        mX: 0, // 鼠标按下的坐标
+        mY: 0,
+        x: 0, // scale原图坐标
+        y: 0,
+    },
+    // 生成图片预览的容器大小
+    previewContainer: {
+        width: 100,
+        height: 100,
+    },
+    // 原图容器宽高
+    sourceImgContainer: {
+        // sic
+        width: 240,
+        height: 184, // 如果生成图比例与此一致会出现bug，先改成特殊的格式吧 
+    },
+    // 原图展示属性
+    scale: {
+        zoomAddOn: false, // 按钮缩放事件开启
+        zoomSubOn: false, // 按钮缩放事件开启
+        range: 1, // 最大100
+        rotateLeft: false, // 按钮向左旋转事件开启
+        rotateRight: false, // 按钮向右旋转事件开启
+        degree: 0, // 旋转度数
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        maxWidth: 0,
+        maxHeight: 0,
+        minWidth: 0, // 最宽
+        minHeight: 0,
+        naturalWidth: 0, // 原宽
+        naturalHeight: 0,
+    },
+});
+const { step, scale, loading, sourceImgUrl, hasError, errorMsg, createImgUrl } = toRefs(data);
+// 进度条样式
+const progressStyle = computed(() => {
+    return {
+        width: data.progress + "%",
+    };
+});
+// 原图样式
+const sourceImgStyle = computed(() => {
+    const top = data.scale.y + sourceImgMasking.value.y + "px";
+    const left = data.scale.x + sourceImgMasking.value.x + "px";
+    return {
+        top,
+        left,
+        width: data.scale.width + "px",
+        height: data.scale.height + "px",
+        transform: "rotate(" + data.scale.degree + "deg)", // 旋转时 左侧原始图旋转样式
+        "-ms-transform": "rotate(" + data.scale.degree + "deg)", // 兼容IE9
+        "-moz-transform": "rotate(" + data.scale.degree + "deg)", // 兼容FireFox
+        "-webkit-transform": "rotate(" + data.scale.degree + "deg)", // 兼容Safari 和 chrome
+        "-o-transform": "rotate(" + data.scale.degree + "deg)", // 兼容 Opera
+    };
+});
+// 原图蒙版属性
+const sourceImgMasking = computed(() => {
+
+    const { width, height } = props;
+    const sic = data.sourceImgContainer;
+    const sicRatio = sic.width / sic.height; // 原图容器宽高比
+    let x = 0;
+    let y = 0;
+    let w = sic.width;
+    let h = sic.height;
+    let scale = 1;
+    if (data.ratio < sicRatio) {
+        scale = sic.height / height;
+        w = sic.height * data.ratio;
+        x = (sic.width - w) / 2;
+    }
+    if (data.ratio > sicRatio) {
+        scale = sic.width / width;
+        h = sic.width / data.ratio;
+        y = (sic.height - h) / 2;
+    }
+    return {
+        scale, // 蒙版相对需求宽高的缩放
+        x,
+        y,
+        width: w,
+        height: h,
+    };
+});
+// 原图遮罩样式
+const sourceImgShadeStyle = computed(() => {
+
+    const sic = data.sourceImgContainer;
+    const sim = sourceImgMasking.value;
+    const w = sim.width === sic.width ? sim.width : (sic.width - sim.width) / 2;
+    const h = sim.height === sic.height ? sim.height : (sic.height - sim.height) / 2;
+    return {
+        width: w + "px",
+        height: h + "px",
+    };
+});
+
+const previewStyle = computed(() => {
+
+    const pc = data.previewContainer;
+    let w = pc.width;
+    let h = pc.height;
+    const pcRatio = w / h;
+    if (data.ratio < pcRatio) {
+        w = pc.height * data.ratio;
+    }
+    if (data.ratio > pcRatio) {
+        h = pc.width / data.ratio;
+    }
+    return {
+        width: w + "px",
+        height: h + "px",
+    };
+});
+
+watch(
+    () => props.value,
+    (newValue) => {
+        if (newValue && data.loading !== 1) {
+            reset();
+        }
+    }
+);
+
+function onCreated() {
+    // 绑定按键esc隐藏此插件事件
+    document.addEventListener("keyup", closeHandler);
+}
+onCreated();
+
+onUnmounted(() => {
+    document.removeEventListener("keyup", closeHandler);
+});
+
+function ripple(e: MouseEvent) {
+    effectRipple(e);
+}
+
+function off() {
+    setTimeout(() => {
+        emit("input", false);
+        emit("close");
+        if (data.step === 3 && data.loading === 2) {
+            setStep(1);
+        }
+    }, 200);
+}
+
+function setStep(no: number) {
+    // 延时是为了显示动画效果呢，哈哈哈
+    setTimeout(() => {
+        data.step = no;
+    }, 200);
+}
+
+function preventDefault(e: Event) {
+    e.preventDefault();
+    return false;
+}
+
+function handleClick(e: Event) {
+    if (data.loading !== 1) {
+        if (e.target !== fileinput.value) {
+            e.preventDefault();
+            if (document.activeElement !== fileinput.value) {
+                fileinput.value?.click()
+            }
+        }
+    }
+}
+
+function handleChange(e: Event) {
+    e.preventDefault();
+    if (data.loading !== 1) {
+        const files = (<HTMLInputElement>e.target).files || (e as DragEvent).dataTransfer?.files as FileList;
+        reset();
+        if (checkFile(files[0])) {
+            setSourceImg(files[0])
+        }
+    }
+}
+
+function checkFile(file: File) {
+    const { lang } = data,
+        maxSize = props.maxSize;
+    // 仅限图片
+    if (file.type.indexOf("image") === -1) {
+        data.hasError = true;
+        data.errorMsg = lang.error.onlyImg;
+        return false;
+    }
+    // 超出大小
+    if (file.size / 1024 > maxSize) {
+        data.hasError = true;
+        data.errorMsg = lang.error.outOfSize + maxSize + "kb";
+        return false;
+    }
+    return true;
+}
+
+function reset() {
+    data.loading = 0;
+    data.hasError = false;
+    data.errorMsg = "";
+    data.progress = 0;
+}
+
+function setSourceImg(file: File) {
+    const fr = new FileReader();
+    fr.onload = (e) => {
+
+        data.sourceImgUrl = fr.result as string;
+
+        startCrop();
+    };
+    fr.readAsDataURL(file);
+}
+
+function startCrop() {
+    const {
+        ratio,
+        sourceImgUrl,
+        lang,
+    } = data;
+
+    const { width, height } = props;
+    const sim = sourceImgMasking.value;
+    const img = new Image();
+    img.width = 294;
+    img.src = sourceImgUrl;
+    img.onload = () => {
+
+        const nWidth = img.naturalWidth;
+        const nHeight = img.naturalHeight;
+        const nRatio = nWidth / nHeight;
+        let w = sim.width;
+        let h = sim.height;
+        let x = 0;
+        let y = 0;
+
+        // 图片像素不达标
+        if (nWidth < width || nHeight < height) {
+            data.hasError = true;
+            data.errorMsg = lang.error.lowestPx + width + "*" + height;
+            return false;
+        }
+        if (ratio > nRatio) {
+            h = w / nRatio;
+            y = (sim.height - h) / 2;
+        }
+        if (ratio < nRatio) {
+            w = h * nRatio;
+            x = (sim.width - w) / 2;
+        }
+
+        data.scale.range = 0;
+        data.scale.x = x;
+        data.scale.y = y;
+        data.scale.width = w;
+        data.scale.height = h;
+        data.scale.degree = 0;
+        data.scale.minWidth = w;
+        data.scale.minHeight = h;
+        data.scale.maxWidth = nWidth * sim.scale;
+        data.scale.maxHeight = nHeight * sim.scale;
+        data.scale.naturalWidth = nWidth;
+        data.scale.naturalHeight = nHeight;
+        data.sourceImg = img;
+        createImg();
+        setStep(2);
+    };
+}
+
+function imgStartMove(e: TouchEvent | MouseEvent) {
+    e.preventDefault();
+    // 支持触摸事件，则鼠标事件无效
+    if (data.isSupportTouch && !(e as TouchEvent).targetTouches) {
+        return false;
+    }
+    const et = (e as TouchEvent).targetTouches ? (e as TouchEvent).targetTouches[0] : e;
+    const { sourceImgMouseDown, scale } = data;
+    const simd = sourceImgMouseDown;
+    simd.mX = (et as MouseEvent).screenX;
+    simd.mY = (et as MouseEvent).screenY;
+    simd.x = scale.x;
+    simd.y = scale.y;
+    simd.on = true;
+}
+
+function imgMove(e: TouchEvent | MouseEvent) {
+    e.preventDefault();
+    // 支持触摸事件，则鼠标事件无效
+    if (data.isSupportTouch && !(e as TouchEvent).targetTouches) {
+        return false;
+    }
+    const et = (e as TouchEvent).targetTouches ? (e as TouchEvent).targetTouches[0] : e;
+    const {
+        sourceImgMouseDown: { on, mX, mY, x, y },
+        scale,
+    } = data;
+    const sim = sourceImgMasking.value;
+    const nX = (et as MouseEvent).screenX;
+    const nY = (et as MouseEvent).screenY;
+    const dX = nX - mX;
+    const dY = nY - mY;
+    let rX = x + dX;
+    let rY = y + dY;
+    if (!on) return;
+    if (rX > 0) {
+        rX = 0;
+    }
+    if (rY > 0) {
+        rY = 0;
+    }
+    if (rX < sim.width - scale.width) {
+        rX = sim.width - scale.width;
+    }
+    if (rY < sim.height - scale.height) {
+        rY = sim.height - scale.height;
+    }
+    data.scale.x = rX;
+    data.scale.y = rY;
+}
+
+function startRotateRight(e: any) {
+    data.scale.rotateRight = true;
+    const { scale } = data;
+    const rotate = () => {
+        if (scale.rotateRight) {
+            const degree = ++scale.degree;
+            createImg(degree);
+            setTimeout(function () {
+                rotate();
+            }, 60);
+        }
+    };
+    rotate();
+}
+
+function startRotateLeft(e: any) {
+    data.scale.rotateLeft = true;
+    const { scale } = data;
+    const rotate = () => {
+        if (scale.rotateLeft) {
+            const degree = --scale.degree;
+            createImg(degree);
+            setTimeout(function () {
+                rotate();
+            }, 60);
+        }
+    };
+    rotate();
+}
+
+function endRotate() {
+    data.scale.rotateLeft = false;
+    data.scale.rotateRight = false;
+}
+
+function startZoomAdd(e: any) {
+    data.scale.zoomAddOn = true;
+    const { scale } = data;
+
+    const zoom = () => {
+        if (scale.zoomAddOn) {
+            const range = scale.range >= 100 ? 100 : ++scale.range;
+            zoomImg(range);
+            setTimeout(function () {
+                zoom();
+            }, 60);
+        }
+    };
+    zoom();
+}
+
+function endZoomAdd(e: any) {
+    data.scale.zoomAddOn = false;
+}
+
+function startZoomSub(e: any) {
+    data.scale.zoomSubOn = true;
+    const { scale } = data;
+    const zoom = () => {
+        if (scale.zoomSubOn) {
+            const range = scale.range <= 0 ? 0 : --scale.range;
+            zoomImg(range);
+            setTimeout(function () {
+                zoom();
+            }, 60);
+        }
+    };
+    zoom();
+}
+
+function endZoomSub(e: any) {
+
+    data.scale.zoomSubOn = false;
+}
+
+function zoomChange(e: Event) {
+    zoomImg((<HTMLInputElement>e.target).value);
+}
+// 缩放原图
+function zoomImg(newRange: string | number) {
+
+    const new_range = +newRange
+    const { scale } = data;
+    const { maxWidth, maxHeight, minWidth, minHeight, width, height, x, y } = scale;
+    const sim = sourceImgMasking.value;
+    // 蒙版宽高
+    const sWidth = sim.width;
+    const sHeight = sim.height;
+    // 新宽高
+    const nWidth = minWidth + ((maxWidth - minWidth) * new_range) / 100;
+    const nHeight = minHeight + ((maxHeight - minHeight) * new_range) / 100;
+    // 新坐标（根据蒙版中心点缩放）
+    let nX = sWidth / 2 - (nWidth / width) * (sWidth / 2 - x);
+    let nY = sHeight / 2 - (nHeight / height) * (sHeight / 2 - y);
+    // 判断新坐标是否超过蒙版限制
+    if (nX > 0) {
+        nX = 0;
+    }
+    if (nY > 0) {
+        nY = 0;
+    }
+    if (nX < sWidth - nWidth) {
+        nX = sWidth - nWidth;
+    }
+    if (nY < sHeight - nHeight) {
+        nY = sHeight - nHeight;
+    }
+    // 赋值处理
+    data.scale.x = nX;
+    data.scale.y = nY;
+    data.scale.width = nWidth;
+    data.scale.height = nHeight;
+    data.scale.range = new_range;
+    setTimeout(() => {
+        if (scale.range == new_range) {
+
+            createImg();
+        }
+    }, 300);
+}
+
+function createImg(e: any = null) {
+    const {
+        mime,
+        sourceImg,
+    } = data;
+    if (e) {
+        // 取消鼠标按下移动状态
+        data.sourceImgMouseDown.on = false;
+    }
+    const scale = sourceImgMasking.value.scale
+    const { x, y, width, height, degree } = data.scale
+    const _canvas = canvas.value as HTMLCanvasElement;
+    const ctx = _canvas.getContext("2d") as CanvasRenderingContext2D;
+    _canvas.width = props.width
+    _canvas.height = props.height
+
+    if (imgFormat.value == 'png') {
+        ctx.fillStyle = 'rgba(0,0,0,0)';
+    } else {
+        // 如果jpg 为透明区域设置背景，默认白色
+        ctx.fillStyle = '#fff';
+    }
+
+    ctx.fillRect(0, 0, width, height);
+    ctx.translate(width * 0.5, height * 0.5);
+    ctx.rotate((Math.PI * degree) / 180);
+    ctx.translate(0 - width * 0.5, 0 - height * 0.5);
+    ctx.drawImage(sourceImg as CanvasImageSource, x / scale, y / scale, width / scale, height / scale);
+
+    data.createImgUrl = _canvas.toDataURL(mime);
+}
+
+function prepareUpload() {
+    const { createImgUrl, } = data;
+    const { ki, field, url, } = props
+    emit("crop-success", createImgUrl, field, ki);
+    if (typeof url === "string" && url) {
+        upload();
+    } else {
+        off();
+    }
+}
+
+function upload() {
+    const { lang, mime, createImgUrl } = data;
+    const { ki, field, params, url } = props
+    const fmData = new FormData();
+    fmData.append(field, data2blob(createImgUrl, mime), field + "." + imgFormat.value);
+    // 添加其他参数
+    if (typeof params === "object" && params) {
+        Object.keys(params).forEach((k) => {
+            fmData.append(k, params[k]);
+        });
+    }
+    // 监听进度回调
+    // const uploadProgress = (event) => {
+    //     if (event.lengthComputable) {
+    //         data.progress = 100 * Math.round(event.loaded) / event.total
+    //     }
+    // }
+    // 上传文件
+    reset();
+    data.loading = 1;
+    setStep(3);
+    request({
+        url,
+        method: "post",
+        data: fmData,
+    })
+        .then((resData) => {
+            data.loading = 2;
+            emit("crop-upload-success", resData); //fixed ：resData.data='',should return resData{}
+        })
+        .catch((err) => {
+            if (props.value) {
+                data.loading = 3;
+                data.hasError = true;
+                data.errorMsg = lang.fail;
+                emit("crop-upload-fail", err, field, ki);
+            }
+        });
+}
+
+function closeHandler(e: any) {
+    if (props.value && (e.key === "Escape" || e.keyCode === 27)) {
+        off();
+    }
+}
+</script>
+
+<style lang="scss"   >
+@charset "UTF-8";
+
+@-webkit-keyframes vicp_progress {
+    0% {
+        background-position-y: 0;
+    }
+
+    100% {
+        background-position-y: 40px;
+    }
+}
+
+@keyframes vicp_progress {
+    0% {
+        background-position-y: 0;
+    }
+
+    100% {
+        background-position-y: 40px;
+    }
+}
+
+@-webkit-keyframes vicp {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(0) translatey(-60px);
+        transform: scale(0) translatey(-60px);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: scale(1) translatey(0);
+        transform: scale(1) translatey(0);
+    }
+}
+
+@keyframes vicp {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(0) translatey(-60px);
+        transform: scale(0) translatey(-60px);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: scale(1) translatey(0);
+        transform: scale(1) translatey(0);
+    }
+}
+
+.vue-image-crop-upload {
+    position: fixed;
+    display: block;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 10000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65);
+    -webkit-tap-highlight-color: transparent;
+    -moz-tap-highlight-color: transparent;
+}
+
+.vue-image-crop-upload .vicp-wrap {
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    position: fixed;
+    display: block;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 10000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 600px;
+    height: 330px;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 2px;
+    -webkit-animation: vicp 0.12s ease-in;
+    animation: vicp 0.12s ease-in;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-close {
+    position: absolute;
+    right: -30px;
+    top: -30px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-close .vicp-icon4 {
+    position: relative;
+    display: block;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    -webkit-transition: -webkit-transform 0.18s;
+    transition: -webkit-transform 0.18s;
+    transition: transform 0.18s;
+    transition: transform 0.18s, -webkit-transform 0.18s;
+    -webkit-transform: rotate(0);
+    -ms-transform: rotate(0);
+    transform: rotate(0);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-close .vicp-icon4::after,
+.vue-image-crop-upload .vicp-wrap .vicp-close .vicp-icon4::before {
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 4px;
+    width: 20px;
+    height: 3px;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    background-color: #fff;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-close .vicp-icon4::after {
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-close .vicp-icon4:hover {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step1 .vicp-drop-area {
+    position: relative;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 35px;
+    height: 170px;
+    background-color: rgba(0, 0, 0, 0.03);
+    text-align: center;
+    border: 1px dashed rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step1 .vicp-drop-area .vicp-icon1 {
+    display: block;
+    margin: 0 auto 6px;
+    width: 42px;
+    height: 42px;
+    overflow: hidden;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step1 .vicp-drop-area .vicp-icon1 .vicp-icon1-arrow {
+    display: block;
+    margin: 0 auto;
+    width: 0;
+    height: 0;
+    border-bottom: 14.7px solid rgba(0, 0, 0, 0.3);
+    border-left: 14.7px solid transparent;
+    border-right: 14.7px solid transparent;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step1 .vicp-drop-area .vicp-icon1 .vicp-icon1-body {
+    display: block;
+    width: 12.6px;
+    height: 14.7px;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step1 .vicp-drop-area .vicp-icon1 .vicp-icon1-bottom {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: block;
+    height: 12.6px;
+    border: 6px solid rgba(0, 0, 0, 0.3);
+    border-top: none;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step1 .vicp-drop-area .vicp-hint {
+    display: block;
+    padding: 15px;
+    font-size: 14px;
+    color: #666;
+    line-height: 30px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step1 .vicp-drop-area .vicp-no-supported-hint {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 30px;
+    width: 100%;
+    height: 60px;
+    line-height: 30px;
+    background-color: #eee;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step1 .vicp-drop-area:hover {
+    cursor: pointer;
+    border-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop {
+    overflow: hidden;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left {
+    float: left;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-img-container {
+    position: relative;
+    display: block;
+    width: 240px;
+    height: 180px;
+    background-color: #e5e5e0;
+    overflow: hidden;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-img-container .vicp-img {
+    position: absolute;
+    display: block;
+    cursor: move;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    max-width: inherit; // 跟 tailwind css 冲突
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-img-container .vicp-img-shade {
+    -webkit-box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
+    position: absolute;
+    background-color: rgba(241, 242, 243, 0.8);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-img-container .vicp-img-shade.vicp-img-shade-1 {
+    top: 0;
+    left: 0;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-img-container .vicp-img-shade.vicp-img-shade-2 {
+    bottom: 0;
+    right: 0;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-rotate {
+    position: relative;
+    width: 240px;
+    height: 18px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-rotate i {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 100%;
+    line-height: 18px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.08);
+    color: #fff;
+    overflow: hidden;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-rotate i:hover {
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.14);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-rotate i:first-child {
+    float: left;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-rotate i:last-child {
+    float: right;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range {
+    position: relative;
+    margin: 30px 0 10px 0;
+    width: 240px;
+    height: 18px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range .vicp-icon5,
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range .vicp-icon6 {
+    position: absolute;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 100%;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range .vicp-icon5:hover,
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range .vicp-icon6:hover {
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.14);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range .vicp-icon5 {
+    left: 0;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range .vicp-icon5::before {
+    position: absolute;
+    content: "";
+    display: block;
+    left: 3px;
+    top: 8px;
+    width: 12px;
+    height: 2px;
+    background-color: #fff;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range .vicp-icon6 {
+    right: 0;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range .vicp-icon6::before {
+    position: absolute;
+    content: "";
+    display: block;
+    left: 3px;
+    top: 8px;
+    width: 12px;
+    height: 2px;
+    background-color: #fff;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range .vicp-icon6::after {
+    position: absolute;
+    content: "";
+    display: block;
+    top: 3px;
+    left: 8px;
+    width: 2px;
+    height: 12px;
+    background-color: #fff;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"] {
+    display: block;
+    padding-top: 5px;
+    margin: 0 auto;
+    width: 180px;
+    height: 8px;
+    vertical-align: top;
+    background: transparent;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    /* 滑块
+               ---------------------------------------------------------------*/
+    /* 轨道
+               ---------------------------------------------------------------*/
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]:focus {
+    outline: none;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]::-webkit-slider-thumb {
+    -webkit-box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -3px;
+    width: 12px;
+    height: 12px;
+    background-color: #61c091;
+    border-radius: 100%;
+    border: none;
+    -webkit-transition: 0.2s;
+    transition: 0.2s;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]::-moz-range-thumb {
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
+    -moz-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background-color: #61c091;
+    border-radius: 100%;
+    border: none;
+    -webkit-transition: 0.2s;
+    transition: 0.2s;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]::-ms-thumb {
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background-color: #61c091;
+    border: none;
+    border-radius: 100%;
+    -webkit-transition: 0.2s;
+    transition: 0.2s;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]:active::-moz-range-thumb {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    width: 14px;
+    height: 14px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]:active::-ms-thumb {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    width: 14px;
+    height: 14px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]:active::-webkit-slider-thumb {
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23);
+    margin-top: -4px;
+    width: 14px;
+    height: 14px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]::-webkit-slider-runnable-track {
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    border-radius: 2px;
+    border: none;
+    background-color: rgba(68, 170, 119, 0.3);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]::-moz-range-track {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    border-radius: 2px;
+    border: none;
+    background-color: rgba(68, 170, 119, 0.3);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]::-ms-track {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    width: 100%;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+    height: 6px;
+    border-radius: 2px;
+    border: none;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]::-ms-fill-lower {
+    background-color: rgba(68, 170, 119, 0.3);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]::-ms-fill-upper {
+    background-color: rgba(68, 170, 119, 0.15);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]:focus::-webkit-slider-runnable-track {
+    background-color: rgba(68, 170, 119, 0.5);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]:focus::-moz-range-track {
+    background-color: rgba(68, 170, 119, 0.5);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]:focus::-ms-fill-lower {
+    background-color: rgba(68, 170, 119, 0.45);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-left .vicp-range input[type="range"]:focus::-ms-fill-upper {
+    background-color: rgba(68, 170, 119, 0.25);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right {
+    float: right;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview {
+    height: 150px;
+    overflow: hidden;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview .vicp-preview-item {
+    position: relative;
+    padding: 5px;
+    width: 100px;
+    height: 100px;
+    float: left;
+    margin-right: 16px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview .vicp-preview-item span {
+    position: absolute;
+    bottom: -30px;
+    width: 100%;
+    font-size: 14px;
+    color: #bbb;
+    display: block;
+    text-align: center;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview .vicp-preview-item img {
+    position: absolute;
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    padding: 3px;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview .vicp-preview-item.vicp-preview-item-circle {
+    margin-right: 0;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step2 .vicp-crop .vicp-crop-right .vicp-preview .vicp-preview-item.vicp-preview-item-circle img {
+    border-radius: 100%;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step3 .vicp-upload {
+    position: relative;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 35px;
+    height: 170px;
+    background-color: rgba(0, 0, 0, 0.03);
+    text-align: center;
+    border: 1px dashed #ddd;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step3 .vicp-upload .vicp-loading {
+    display: block;
+    padding: 15px;
+    font-size: 16px;
+    color: #999;
+    line-height: 30px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step3 .vicp-upload .vicp-progress-wrap {
+    margin-top: 12px;
+    background-color: rgba(0, 0, 0, 0.08);
+    border-radius: 3px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step3 .vicp-upload .vicp-progress-wrap .vicp-progress {
+    position: relative;
+    display: block;
+    height: 5px;
+    border-radius: 3px;
+    background-color: #4a7;
+    -webkit-box-shadow: 0 2px 6px 0 rgba(68, 170, 119, 0.3);
+    box-shadow: 0 2px 6px 0 rgba(68, 170, 119, 0.3);
+    -webkit-transition: width 0.15s linear;
+    transition: width 0.15s linear;
+    background-image: -webkit-linear-gradient(135deg,
+            rgba(255, 255, 255, 0.2) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.2) 75%,
+            transparent 75%,
+            transparent);
+    background-image: linear-gradient(-45deg,
+            rgba(255, 255, 255, 0.2) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.2) 75%,
+            transparent 75%,
+            transparent);
+    background-size: 40px 40px;
+    -webkit-animation: vicp_progress 0.5s linear infinite;
+    animation: vicp_progress 0.5s linear infinite;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step3 .vicp-upload .vicp-progress-wrap .vicp-progress::after {
+    content: "";
+    position: absolute;
+    display: block;
+    top: -3px;
+    right: -3px;
+    width: 9px;
+    height: 9px;
+    border: 1px solid rgba(245, 246, 247, 0.7);
+    -webkit-box-shadow: 0 1px 4px 0 rgba(68, 170, 119, 0.7);
+    box-shadow: 0 1px 4px 0 rgba(68, 170, 119, 0.7);
+    border-radius: 100%;
+    background-color: #4a7;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-step3 .vicp-upload .vicp-error,
+.vue-image-crop-upload .vicp-wrap .vicp-step3 .vicp-upload .vicp-success {
+    height: 100px;
+    line-height: 100px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-operate {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-operate a {
+    position: relative;
+    float: left;
+    display: block;
+    margin-left: 10px;
+    width: 100px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #4a7;
+    border-radius: 2px;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-operate a:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-error,
+.vue-image-crop-upload .vicp-wrap .vicp-success {
+    display: block;
+    font-size: 14px;
+    line-height: 24px;
+    height: 24px;
+    color: #d10;
+    text-align: center;
+    vertical-align: top;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-success {
+    color: #4a7;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-icon3 {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    top: 4px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-icon3::after {
+    position: absolute;
+    top: 3px;
+    left: 6px;
+    width: 6px;
+    height: 10px;
+    border-width: 0 2px 2px 0;
+    border-color: #4a7;
+    border-style: solid;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    content: "";
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-icon2 {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    top: 4px;
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-icon2::after,
+.vue-image-crop-upload .vicp-wrap .vicp-icon2::before {
+    content: "";
+    position: absolute;
+    top: 9px;
+    left: 4px;
+    width: 13px;
+    height: 2px;
+    background-color: #d10;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.vue-image-crop-upload .vicp-wrap .vicp-icon2::after {
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.e-ripple {
+    position: absolute;
+    border-radius: 100%;
+    background-color: rgba(0, 0, 0, 0.15);
+    background-clip: padding-box;
+    pointer-events: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0);
+    opacity: 1;
+}
+
+.e-ripple.z-active {
+    opacity: 0;
+    -webkit-transform: scale(2);
+    -ms-transform: scale(2);
+    transform: scale(2);
+    -webkit-transition: opacity 1.2s ease-out, -webkit-transform 0.6s ease-out;
+    transition: opacity 1.2s ease-out, -webkit-transform 0.6s ease-out;
+    transition: opacity 1.2s ease-out, transform 0.6s ease-out;
+    transition: opacity 1.2s ease-out, transform 0.6s ease-out, -webkit-transform 0.6s ease-out;
+}
+</style>

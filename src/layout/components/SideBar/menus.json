@@ -1,0 +1,72 @@
+[
+  {
+    // 注意！注意！有children的菜单项，path不会使用的，所以path为什么都无所谓；没children的，即children的length等于0的，才会使用path属性做路由跳转
+    "name": "前端三大框架",
+    "path": "前端三大框架",
+    "icon": "ep:location",
+    "children": [
+      {
+        "name": "vue页面",
+        "path": "/vue",
+        "icon": "ep:location",
+        "children": []
+      },
+      {
+        "name": "react页面",
+        "path": "/react",
+        "icon": "ep:location",
+        "children": []
+      },
+      {
+        "name": "angular页面",
+        "path": "/angular",
+        "icon": "ep:location",
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "后端两大框架",
+    "path": "后端两大框架",
+    "icon": "ep:location",
+    "children": [
+      {
+        "name": "Spring Boot页面",
+        "path": "/springBoot",
+        "icon": "ep:location",
+        "children": []
+      },
+      {
+        "name": "Spring页面",
+        "path": "Spring页面",
+        "icon": "ep:location",
+        "children": [
+          {
+            "name": "MySql页面",
+            "path": "/mysql",
+            "icon": "ep:location",
+            "children": []
+          },
+          {
+            "name": "Redis页面",
+            "path": "/redis",
+            "icon": "ep:location",
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "Mybatis页面",
+        "path": "/mybatis",
+        "icon": "ep:location",
+        "children": []
+      }
+    ]
+  },
+  {
+    "name": "独立项目",
+    "path": "/single",
+    "icon": "ep:setting",
+    "children": []
+  }
+]
