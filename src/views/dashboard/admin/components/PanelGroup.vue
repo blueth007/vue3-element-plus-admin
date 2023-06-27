@@ -3,9 +3,9 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
         <div class="card-panel-icon-wrapper icon-people">
-          <el-icon class="card-panel-icon">
+          <div class="card-panel-icon">
             <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-          </el-icon>
+          </div>
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">New Visits</div>
@@ -16,9 +16,9 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('messages')">
         <div class="card-panel-icon-wrapper icon-message">
-          <el-icon class="card-panel-icon">
+          <div class="card-panel-icon">
             <svg-icon icon-class="message" class-name="card-panel-icon" />
-          </el-icon>
+          </div>
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">Messages</div>
@@ -29,9 +29,9 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('purchases')">
         <div class="card-panel-icon-wrapper icon-money">
-          <el-icon class="card-panel-icon">
+          <div class="card-panel-icon">
             <svg-icon icon-class="money" class-name="card-panel-icon" />
-          </el-icon>
+          </div>
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">Purchases</div>
@@ -42,9 +42,9 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('shoppings')">
         <div class="card-panel-icon-wrapper icon-shopping">
-          <el-icon class="card-panel-icon">
+          <div class="card-panel-icon">
             <svg-icon icon-class="shopping" class-name="card-panel-icon" />
-          </el-icon>
+          </div>
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">Shoppings</div>
@@ -81,8 +81,8 @@ function handleSetLineChartData(type: string) {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
+    border-color: rgba(0, 0, 0, .05);
 
     &:hover {
       .card-panel-icon-wrapper {
@@ -102,7 +102,7 @@ function handleSetLineChartData(type: string) {
       }
 
       .icon-shopping {
-        background: #34bfa3;
+        background: #34bfa3
       }
     }
 
@@ -119,7 +119,7 @@ function handleSetLineChartData(type: string) {
     }
 
     .icon-shopping {
-      color: #34bfa3;
+      color: #34bfa3
     }
 
     .card-panel-icon-wrapper {
@@ -138,7 +138,7 @@ function handleSetLineChartData(type: string) {
     .card-panel-description {
       float: right;
       font-weight: bold;
-      margin: 26px 12px;
+      margin: 26px;
       margin-left: 0px;
 
       .card-panel-text {
@@ -152,24 +152,24 @@ function handleSetLineChartData(type: string) {
         font-size: 20px;
       }
     }
+  }
+}
 
-    @media (max-width: 550px) {
-      .card-panel-description {
-        display: none;
-      }
+@media (max-width:550px) {
+  .card-panel-description {
+    display: none;
+  }
 
-      .card-panel-icon-wrapper {
-        float: none !important;
-        width: 100%;
-        height: 100%;
-        margin: 0 !important;
+  .card-panel-icon-wrapper {
+    float: none !important;
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
 
-        .svg-icon {
-          display: block;
-          margin: 14px auto !important;
-          float: none !important;
-        }
-      }
+    .svg-icon {
+      display: block;
+      margin: 14px auto !important;
+      float: none !important;
     }
   }
 }

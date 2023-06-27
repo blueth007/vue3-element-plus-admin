@@ -12,6 +12,8 @@ defineProps({
 
 </script>
 <template>
-    <svg-icon :icon-class=icon v-if="icon" />
-    <span slot="title" v-if="title">{{ title }}</span>
+    <div style="display: inline-block;">
+        <svg-icon :icon-class=icon v-if="icon" />
+        <span slot="title" v-if="title">{{ title }}</span>
+    </div>
 </template>

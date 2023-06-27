@@ -37,7 +37,7 @@ onMounted(() => {
 
 function fetchData() {
   transactionList().then((response: any) => {
-    list.value = response.data.items.slice(0, 8);
+    response.data.items && (list.value = response.data.items.slice(0, 8));
   });
 }
 
