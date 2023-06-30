@@ -9,9 +9,11 @@
       <a target="_blank" class="link-type"
         href="https://panjiachen.github.io/vue-element-admin-site/component/rich-editor.html">Documentation</a>
       <p>this project base on <strong> tinymce@5.x </strong> and add some plugins in plublic file</p>
+      <p><strong>this is dynamicLoadScript Vue Component . if you want to importWord/exportWord ,please open link <a
+            href="#/example/create">create Article</a></strong></p>
     </aside>
     <div>
-      <tinymced v-model="content" :height="300" @getContent="getContent" />
+      <tinymce v-model="content" :height="300" @getContent="getContent" />
     </div>
     <div class="editor-content" v-html="content"></div>
   </div>
@@ -20,7 +22,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-import Tinymced from "@/components/Tinymce/index.vue";
+import Tinymce from "@/components/Tinymce/dyIndex.vue";
 
 const content = ref(
   `<h1 style="text-align: center;">Welcome to the TinyMCE demo!</h1><p style="text-align: center; font-size: 15px;"><img title="TinyMCE Logo" src="//www.tinymce.com/images/glyph-tinymce@2x.png" alt="TinyMCE Logo" width="110" height="97" /><ul>

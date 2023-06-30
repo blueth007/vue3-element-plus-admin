@@ -7369,7 +7369,7 @@ section.`)
 					!r.cssStyle["max-width"] && (r.cssStyle["max-width"] = "100%");
 					//r.cssStyle.width && (r.cssStyle.width = parseFloat(r.cssStyle.width) * 2 + "pt"), r.cssStyle.height && (r.cssStyle.height = parseFloat(r.cssStyle.height) * 2 + "pt");// pt.replace --> px
 					var t = "";
-					((n = (e = r.parent) === null || e === void 0 ? void 0 : e.parent) === null || n === void 0 ? void 0 : n.parent) && r.parent.parent.parent.cssStyle && (t = r.parent.parent.parent.cssStyle["text-align"]), t == "right" && (r.cssStyle.float = "right", r.cssStyle.height.replace(/(\d+(.\d+)?)pt/g,(str,p)=>{ return (p*96/72).toFixed(2) +'px'})  ), t == "center" && (r.cssStyle.display = "block", r.cssStyle["margin-left"] = "auto", r.cssStyle["margin-right"] = "auto"), this.renderStyleValues(r.cssStyle, a);
+					((n = (e = r.parent) === null || e === void 0 ? void 0 : e.parent) === null || n === void 0 ? void 0 : n.parent) && r.parent.parent.parent.cssStyle && (t = r.parent.parent.parent.cssStyle["text-align"]), t == "right" && (r.cssStyle.float = "right", r.cssStyle.height.replace(/(\d+(.\d+)?)pt/g,(str,p)=>{ return Math.floor(p*96/72)  +'px'})  ), t == "center" && (r.cssStyle.display = "block", r.cssStyle["margin-left"] = "auto", r.cssStyle["margin-right"] = "auto"), this.renderStyleValues(r.cssStyle, a);
 					var o = this;
 					return o.renderImageCount++, a.setAttribute("data-tp-src", r.src), this.document && this.document.loadDocumentImage(r.src, this.currentPart)
 						.then(function(u) {
@@ -7588,7 +7588,7 @@ section.`)
 				value: function(r, e) {
 					r && Object.keys(r)
 						.forEach(function(n) {
-							e.style[n] = typeof r[n] == "string" ? r[n].replace(/(\d+(.\d+)?)pt/g,(str,p)=>{ return (p*96/72).toFixed(2) +'px'}) : r[n]
+							e.style[n] = typeof r[n] == "string" ? r[n].replace(/(\d+(.\d+)?)pt/g,(str,p)=>{ return Math.floor(p*96/72)  +'px'}) : r[n]
 						})
 				}
 			}), Object.defineProperty(i.prototype, "renderClass", {

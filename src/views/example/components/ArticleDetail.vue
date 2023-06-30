@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import Tinymce from '@/components/Tinymce/index.vue';
+import Tinymce from '@/components/Tinymce/tinymcePlus.vue';
 import Upload from '@/components/Upload/SingleImage3.vue';
 import MDinput from '@/components/MDinput/index.vue';
 import Sticky from '@/components/Sticky/index.vue' // 粘性header组件

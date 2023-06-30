@@ -35,3 +35,4 @@ pugin.js--> #8888
 // str.replace(regex, (match, p1) => `${Number(p1) * 1.33333}px`); //pt 转 px 正则表达式
 
 panelGroup 中 svg className 能引入 style 中，但是 svg 不能正确显示大小，外加 div.card-panel-icon
+v-on="$attrs" --> v-bind="$attrs"

@@ -26,9 +26,10 @@
 </template>
 
 <script setup lang="ts">
+import { reactive, toRefs, watch } from 'vue'
+
 const defaultFormThead = ['apple', 'banana']
 
-import { reactive, toRefs, watch } from 'vue'
 
 const data = reactive({
   tableData: [{

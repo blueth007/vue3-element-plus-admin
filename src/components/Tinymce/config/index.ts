@@ -6,20 +6,19 @@ export default {
   placeholder: "在这里输入文字......",
   branding: false, //隐藏右下角技术支持
   plugins:
-    "preview exportWord  searchreplace   quickbars  powerpaste   autolink directionality visualblocks visualchars fullscreen image link media template pagebreak  code  codesample table   nonbreaking anchor insertdatetime letterspacing  advlist lists wordcount  help  autosave   tpImportword print  ",
+    "preview exportWord  searchreplace   quickbars   autolink directionality visualblocks visualchars fullscreen image link media template pagebreak  code  codesample table   nonbreaking anchor insertdatetime letterspacing  advlist lists wordcount  help  autosave   tpImportword print  ",
   toolbar:
     "undo redo restoredraft    |bold italic underline strikethrough  |  fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent  numlist bullist checklist | forecolor backcolor lineheight letterspacing |  table tableprops | blockquote subscript superscript removeformat | \
      cut copy paste pastetextlink anchor    |\
-image mediacharmap bdmap|  axupimgs   tpImportword  exportWord  powerpaste | pagebreak insertdatetime  preview  print  fullscreen code | autosave",
+image mediacharmap bdmap|  axupimgs   tpImportword  exportWord   | pagebreak insertdatetime  preview  print  fullscreen code | autosave",
 
   external_plugins: {
-    // importword: "/tinymce/plugins/importword/plugin.js", // 不能更新word样式
     tpImportword: "/tinymce/plugins/tpImportword/plugin.min.js",
     bdmap: "/tinymce/plugins/bdmap/plugin.js",
     axupimgs: "/tinymce/plugins/axupimgs/plugin.js",
     exportWord: "/tinymce/plugins/exportword/plugin.min.js",
     letterspacing: "/tinymce/plugins/letterspacing/plugin.min.js",
-    powerpaste: "/tinymce/plugins/tinymce-all-in-one-yctmp/plugins/powerpaste/plugin.min.js", //需要flash
+    // powerpaste: "/tinymce/plugins/tinymce-all-in-one-yctmp/plugins/powerpaste/plugin.min.js", //搜tinymce-all-in-one-yctmp 需要flash
   },
   height: 600, //编辑器高度
   min_height: 500,

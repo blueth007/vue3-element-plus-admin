@@ -8,9 +8,8 @@ import "@iconify/iconify";
 import "./permission";
 
 const app = createApp(App);
-// if you don't  use mock,this way is use fastmock interface. 
+//// if you don't  use mock,this way is use fastmock interface.
 // if (import.meta.env.MODE == "development") {
-//   //   const { mockXHR } = require("../mock");
 //   mockXHR();
 // }
 

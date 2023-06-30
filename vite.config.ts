@@ -8,7 +8,9 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { resolve } from "path";
 import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
-
+//优化插件
+import { visualizer } from "rollup-plugin-visualizer";
+import viteCompression from "vite-plugin-compression";
 //这里必须安装一个依赖 yarn add @types/node@16.13.0 -D
 import { svgBuilder } from "./src/plugins/svgBuilder";
 
@@ -33,6 +35,17 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    viteCompression({
+      algorithm: "gzip",
+      threshold: 10240,
+      verbose: false,
+      deleteOriginFile: true,
+    }),
+    visualizer({
+      emitFile: false,
+      filename: "stats.html", //分析图生成的文件名
+      open: true, //如果存在本地服务端口，将在打包后自动展示
+    }),
     svgBuilder({ path: "src/icons/svg/", prefix: "icon" }),
 
     AutoImport({

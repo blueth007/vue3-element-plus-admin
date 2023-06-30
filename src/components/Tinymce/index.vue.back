@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-//JS部分
+//使用 yarn add tinymce@5.10.7 
 //在js中引入所需的主题和组件
 import tinymce from "tinymce/tinymce";
 import "tinymce/skins/content/default/content.css";
@@ -16,7 +16,7 @@ import Editor from "@tinymce/tinymce-vue";
 import "tinymce/themes/silver";
 import "tinymce/themes/silver/theme";
 import "tinymce/icons/default"; //引入编辑器图标icon，不引入则不显示对应图标
-// import "tinymce/models/dom";
+
 //在TinyMce.vue中接着引入相关插件
 import "tinymce/icons/default/icons";
 
@@ -107,24 +107,7 @@ const init = reactive({
       reader.readAsDataURL(file);
     }
   },
- 
-  // // 文件上传
-  // file_picker_callback: (callback: any, value: any, meta: any) => {
-  //     // Provide file and text for the link dialog
-  //     if (meta.filetype == 'file') {
-  //         callback('mypage.html', { text: 'My text' });
-  //     }
 
-  //     // Provide image and alt text for the image dialog
-  //     if (meta.filetype == 'image') {
-  //         callback('myimage.jpg', { alt: 'My alt text' });
-  //     }
-
-  //     // Provide alternative source and posted for the media dialog
-  //     if (meta.filetype == 'media') {
-  //         callback('movie.mp4', { source2: 'alt.ogg', poster: 'image.jpg' });
-  //     }
-  // }
 });
 
 //监听外部传递进来的的数据变化

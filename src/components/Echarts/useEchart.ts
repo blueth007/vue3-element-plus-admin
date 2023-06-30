@@ -1,6 +1,6 @@
 import { nextTick, onMounted, onUnmounted, Ref, unref, isRef, onBeforeUnmount } from "vue";
- import echarts from "./library";
-import type { EChartsOption } from "./library";
+import echarts from "./library";
+import type { EChartsOption } from "echarts";
 import { SVGRenderer, CanvasRenderer } from "echarts/renderers";
 import { RenderType, ThemeType } from "./echarts-types";
 
@@ -23,7 +23,6 @@ export default function useChart(
       return;
     }
     chartInstance = echarts.init(el, theme);
-    
   };
 
   // 更新/设置配置

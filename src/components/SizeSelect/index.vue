@@ -15,13 +15,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, inject } from "vue";
+import { computed, nextTick, ref} from "vue";
 import { useStore } from "@/store";
 import { useTagsViewStore } from "@/store/tagsView";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-
-const changeConfigProviderSize = inject("changeConfigProviderSize") as Function
 
 const tagsView = useTagsViewStore();
 const $store = useStore();
@@ -43,8 +41,8 @@ function handleSetSize(size: string) {
   //   this.$ELEMENT.size = size
   //   this.$store.dispatch('app/setSize', size)
   $store.app.setSize(size)
-  // refreshView()  //只能刷新 不能改变size
-  changeConfigProviderSize(size) //通过全局注入直接改变size
+ refreshView()  //只能刷新 不能改变size
+
   ElMessage({
     message: 'Switch Size Success',
     type: 'success'
