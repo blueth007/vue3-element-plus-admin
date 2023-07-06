@@ -67,7 +67,7 @@ import { fetchList } from '@/api/article'
 import Sortable from 'sortablejs'
 import { parseTime } from '@/utils/index'
 import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
-
+import type { TagProps } from 'element-plus'
 const dragTable = ref()
 
 const data = reactive({
@@ -125,7 +125,7 @@ function setSort() {
 }
 
 function statusFilter(status: string) {
-  const statusMap: { [key: string]: string } = {
+  const statusMap: { [key: string]:  TagProps['type'] } = {
     published: 'success',
     draft: 'info',
     deleted: 'danger'

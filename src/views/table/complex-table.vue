@@ -160,6 +160,7 @@ import { ElNotification } from 'element-plus'
 import { onMounted, nextTick, reactive, toRefs, ref, onBeforeMount } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
+import type { TagProps } from 'element-plus'
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -215,7 +216,7 @@ const data = reactive({
     type: [{ required: true, message: 'type is required', trigger: 'change' }],
     timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
     title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-  },
+  } as FormRules,
   downloadLoading: false
 })
 const { dialogPvVisible, importanceOptions, showReviewer, total, textMap, dialogFormVisible, rules, temp, dialogStatus,
@@ -228,7 +229,7 @@ onBeforeMount(() => {
 })
 
 const statusFilter = (status: string) => {
-  const statusMap: { [key: string]: string } = {
+  const statusMap: { [key: string]: TagProps['type'] } = {
     published: 'success',
     draft: 'info',
     deleted: 'danger'

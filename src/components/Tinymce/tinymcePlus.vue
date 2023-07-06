@@ -17,6 +17,7 @@ import editorImage from "./components/EditorImage.vue";
 import config from './config'
 import load from "./dynamicLoadScript";
 import { computed, nextTick, onActivated, onDeactivated, onMounted, onUnmounted, onUpdated, reactive, toRefs, watch } from "vue";
+import dyload from "@/utils/loadDymoicScipt"
 
 // why use this cdn, detail see https://github.com/PanJiaChen/tinymce-all-in-one
 const tinymceCDN =
@@ -73,6 +74,7 @@ const data = reactive({
         ja: "ja",
     },
 })
+
 const containerWidth = computed(() => {
     const width = props.width;
     if (/^[\d]+(\.[\d]+)?$/.test(width + '')) {
@@ -117,13 +119,21 @@ onUnmounted(() => {
 
 function init() {
     // dynamic load tinymce from cdn
-    load(tinymceCDN, (err: any) => {
+    dyload((<any>window).window.tinymce, tinymceCDN, (err: any) => {
         if (err) {
             ElMessage.error(err.message);
             return;
         }
+
         initTinymce();
     })
+    // load(tinymceCDN, (err: any) => {
+    //     if (err) {
+    //         ElMessage.error(err.message);
+    //         return;
+    //     }
+    //     initTinymce();
+    // })
 }
 function initTinymce() {
     (<any>window).window.tinymce.init({

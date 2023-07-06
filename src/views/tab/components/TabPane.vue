@@ -54,6 +54,7 @@
 import { parseTime } from '@/utils'
 import { fetchList } from '@/api/article'
 import { onBeforeMount, reactive, toRefs } from 'vue'
+import type { TagProps } from 'element-plus'
 
 const props = defineProps({
     type: {
@@ -89,7 +90,7 @@ function getList() {
 }
 
 function statusFilter(status: string) {
-    const statusMap: { [key: string]: string } = {
+    const statusMap: { [key: string]: TagProps['type'] } = {
         published: 'success',
         draft: 'info',
         deleted: 'danger'

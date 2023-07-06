@@ -61,7 +61,7 @@ const uploadRequest = (param: any) => {
             item.status = 'uploading'
         }
     })
-    request({
+    return request({
         url: param.action, method: param.method, data: formData,
     }).then((response: any) => {
         // ElMessage({ type: 'success', message: '上传成功' })
@@ -81,12 +81,12 @@ const handleImageSuccess: UploadProps['onSuccess'] = (
     response,
     uploadFile
 ) => {
-   // console.log("handleImageSuccess", response, uploadFile)
+    // console.log("handleImageSuccess", response, uploadFile)
     // imageUrl.value = URL.createObjectURL(uploadFile.raw!)
 
 }
 const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
-   
+
     data.fileList = uploadFiles
 }
 const handleChange: UploadProps['onChange'] = (uploadFile, uploadFiles) => {

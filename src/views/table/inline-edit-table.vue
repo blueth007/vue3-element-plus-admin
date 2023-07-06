@@ -66,9 +66,10 @@ import { fetchList } from '@/api/article'
 import { parseTime } from '@/utils/index'
 import { toRefs, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-
+import type { TagProps } from 'element-plus'
+type Item = { type: TagProps['type']; label: string }
 const data = reactive({
-  list: null,
+  list: [],
   listLoading: true,
   listQuery: {
     page: 1,
@@ -114,7 +115,7 @@ function confirmEdit(row: any) {
 }
 
 function statusFilter(status: string) {
-  const statusMap: { [key: string]: string } = {
+  const statusMap: { [key: string]: TagProps['type'] } = {
     published: 'success',
     draft: 'info',
     deleted: 'danger'

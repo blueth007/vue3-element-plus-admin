@@ -5,10 +5,10 @@
 <script lang="ts" setup>
 import { onMounted, Ref, ref, computed, nextTick, watchEffect, watch } from "vue";
 import type { EChartsOption } from "@/components/Echarts/useEchart";
-import useChart, { RenderType, ThemeType } from "@/components/Echarts/useEchart";
+import useChart, { ThemeType } from "@/components/Echarts/useEchart";
 
 const chartEl_line = ref<HTMLDivElement | null>(null);
-const { setOption, showLoading } = useChart(chartEl_line as Ref<HTMLDivElement>, true, true, RenderType.CanvasRenderer, ThemeType.Light);
+const { setOption, showLoading } = useChart(chartEl_line as Ref<HTMLDivElement>, true, true, ThemeType.Light);
 
 const props = defineProps({
   className: {

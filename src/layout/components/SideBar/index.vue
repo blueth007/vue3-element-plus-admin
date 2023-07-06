@@ -31,10 +31,11 @@ const showLogo = computed(() => {
 const activeMenu = computed(() => {
   const { meta, path } = route;
   // if set path, the sidebar will highlight the path you set
+  console.log("meta", meta, route);
   if (meta.activeMenu) {
-    return meta.activeMenu;
+    return meta.activeMenu as string;
   }
-  return path;
+  return path ;
 });
 
 onMounted(async () => {

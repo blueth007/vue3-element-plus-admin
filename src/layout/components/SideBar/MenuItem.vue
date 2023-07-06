@@ -19,7 +19,7 @@
         <span slot="title" :data-link="item.path">{{ onlyOneChild.meta?.title || item.name || onlyOneChild.name }} </span>
       </el-menu-item>
     </template>
-    <el-sub-menu :index="item.path" v-else>
+    <el-sub-menu :index="item.path ?? '/'" v-else>
       <template #title>
         <el-icon class="inline-block" v-if="item.meta?.icon">
           <svg-icon :icon-class="item.meta?.icon" class-name="disabled"></svg-icon>

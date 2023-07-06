@@ -22,6 +22,7 @@
 import { transactionList } from "@/api/remote-search";
 import { ref, onMounted } from "vue";
 import { toThousandFilter } from "@/utils/filters";
+import type { TagProps } from 'element-plus'
 type ListItem = {
   order_no: string;
   timestamp: string;
@@ -42,7 +43,7 @@ function fetchData() {
 }
 
 function statusFilter(status: string) {
-  const statusMap: { [key: string]: string } = {
+  const statusMap: { [key: string]: TagProps['type'] } = {
     success: "success",
     pending: "danger",
   };

@@ -1,24 +1,14 @@
 // lib.ts
 import * as echarts from "echarts/core";
 
-import {
-  BarChart,
-  BarSeriesOption,
-  LineChart,
-  LineSeriesOption,
-  PieChart,
-  PieSeriesOption,
-  MapChart,
-  PictorialBarChart,
-  RadarChart,
-  ScatterChart,
-} from "echarts/charts";
+import { BarChart, LineChart, PieChart, MapChart, RadarChart, ScatterChart } from "echarts/charts";
 // 标签自动布局、全局过渡动画等特性
 import { LabelLayout, UniversalTransition } from "echarts/features";
 // 引入 Canvas 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
 import { CanvasRenderer } from "echarts/renderers";
-
 import {
+  TooltipComponent,
+  GridComponent,
   PolarComponent,
   AriaComponent,
   ParallelComponent,
@@ -33,12 +23,19 @@ import {
   TitleComponent,
   DatasetComponent,
   TransformComponent,
+} from "echarts/components";
+
+import type {
+  // 系列类型的定义后缀都为 SeriesOption
+  BarSeriesOption,
+  LineSeriesOption,
+  PieSeriesOption,
+} from "echarts/charts";
+import type {
   // 组件类型的定义后缀都为 ComponentOption
   LegendComponentOption,
   TitleComponentOption,
-  TooltipComponent,
   TooltipComponentOption,
-  GridComponent,
   GridComponentOption,
   // 数据集组件
   DatasetComponentOption,
@@ -70,7 +67,6 @@ echarts.use([
   PieChart,
   MapChart,
   RadarChart,
-  PictorialBarChart,
   RadarComponent,
   ToolboxComponent,
   DataZoomComponent,

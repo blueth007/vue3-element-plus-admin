@@ -1,5 +1,6 @@
 import Mock from "mockjs";
 import { param2Obj } from "../src/utils";
+import { MockMethod } from "vite-plugin-mock";
 
 import user from "./user";
 import role from "./role";
@@ -49,4 +50,4 @@ export function mockXHR() {
   }
 }
 
-export default mocks;
+export default mocks as MockMethod[];

@@ -8,7 +8,7 @@ import { onMounted, Ref, ref, computed, nextTick } from "vue";
 import useChart, { RenderType, ThemeType ,EChartsOption} from "@/components/Echarts/useEchart";
 
 const chartEl_bar = ref<HTMLDivElement | null>(null);
-const { setOption, showLoading } = useChart(chartEl_bar as Ref<HTMLDivElement>, true, true, RenderType.CanvasRenderer, ThemeType.Light);
+const { setOption, showLoading } = useChart(chartEl_bar as Ref<HTMLDivElement>, true, true,   ThemeType.Light);
 
 const props = defineProps({
   className: {

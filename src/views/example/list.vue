@@ -63,7 +63,7 @@
 import { parseTime } from "@/utils/index"
 import { fetchList } from '@/api/article'
 import Pagination from '@/components/Pagination/index.vue' // Secondary package based on el-pagination
-
+import type { TagProps } from 'element-plus'
 import { reactive, toRefs } from 'vue'
 
 const data = reactive({
@@ -91,7 +91,7 @@ function getList() {
 }
 
 function statusFilter(status: string) {
-    const statusMap: { [key: string]: string } = {
+    const statusMap: { [key: string]:  TagProps['type'] } = {
         published: 'success',
         draft: 'info',
         deleted: 'danger'

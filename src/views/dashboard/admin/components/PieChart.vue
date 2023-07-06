@@ -8,7 +8,7 @@ import type { EChartsOption } from "echarts";
 import useChart, { RenderType, ThemeType } from "@/components/Echarts/useEchart";
 
 const chartEl_pie = ref<HTMLDivElement | null>(null);
-const { setOption, showLoading } = useChart(chartEl_pie as Ref<HTMLDivElement>, true, true, RenderType.CanvasRenderer, ThemeType.Light);
+const { setOption, showLoading } = useChart(chartEl_pie as Ref<HTMLDivElement>, true, true,  ThemeType.Light);
 
 const props = defineProps({
   className: {

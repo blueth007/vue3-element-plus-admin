@@ -63,7 +63,7 @@ const uploadRequest = (param: any) => {
             item.status = 'uploading'
         }
     })
-    request({
+    return request({
         url: param.action, method: param.method, data: formData,
     }).then((response: any) => {
         ElMessage({ type: 'success', message: '上传成功' })
@@ -127,7 +127,7 @@ function handleRemoved(file: any) {
 }
 
 const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
- 
+
     handleRemoved(uploadFile.raw)
     data.fileList = uploadFiles
 }
@@ -157,7 +157,7 @@ async function upLoadMyself() {
     }
 }
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
-     if (rawFile.size / 1024 / 1024 > 2) {
+    if (rawFile.size / 1024 / 1024 > 2) {
         ElMessage.error('Avatar picture size can not exceed 2MB!')
         return false
     }
@@ -179,11 +179,11 @@ const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
 }
 
 const handleChange: UploadProps['onChange'] = (uploadFile, uploadFiles) => {
- 
+
     data.fileList = uploadFiles
 }
 const handleProgess: UploadProps['onProgress'] = (event, file, fileList) => {
-   // console.log("onProgress:", event, file, fileList)
+    // console.log("onProgress:", event, file, fileList)
 }
 </script>
 

@@ -12,6 +12,7 @@ import { getToken } from '@/api/qiniu'
 // 获取七牛token 后端通过Access Key,Secret Key,bucket等生成token
 // 七牛官方sdk https://developer.qiniu.com/sdk#official-sdk
 import { reactive, toRefs } from 'vue'
+import type { UploadProps } from 'element-plus'
 
 const data = reactive({
     dataObj: { token: '', key: '' },
@@ -19,7 +20,11 @@ const data = reactive({
     fileList: []
 })
 const { dataObj, image_uri, fileList } = toRefs(data)
-function beforeUpload() {
+
+
+const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
+
+
 
     return new Promise((resolve, reject) => {
         getToken().then(response => {
@@ -28,11 +33,14 @@ function beforeUpload() {
             data.dataObj.token = token
             data.dataObj.key = key
             resolve(true)
+            return true
         }).catch(err => {
             console.log(err)
             reject(false)
+            return false
         })
     })
 }
+
 
 </script>

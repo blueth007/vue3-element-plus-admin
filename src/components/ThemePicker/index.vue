@@ -34,7 +34,7 @@ watch(() => defaultTheme.value, (val, oldVal) => {
     immediate: true
 })
 
-const themeChange = (color: string) => {
+const themeChange = (color: string | null) => {
     ElMessage({
         message: '  Compiling the theme',
         customClass: 'theme-message',

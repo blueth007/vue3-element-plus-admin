@@ -80,6 +80,8 @@ import { toggleClass } from '@/utils'
 import "element-plus/theme-chalk/dark/css-vars.css";
 import { reactive, watch, toRefs } from 'vue'
 import { Delete, Edit, Search, Share } from '@element-plus/icons-vue'
+import type { TagProps } from 'element-plus'
+
 const data = reactive({
     theme: false,
     tags: [
@@ -88,7 +90,7 @@ const data = reactive({
         { name: 'Tag Three', type: 'success' },
         { name: 'Tag Four', type: 'warning' },
         { name: 'Tag Five', type: 'danger' }
-    ],
+    ] as { name: string; type: TagProps['type'] }[],
     slideValue: 50,
     radio: 3
 })

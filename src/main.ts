@@ -7,10 +7,11 @@ import "./styles/index.scss";
 import "@iconify/iconify";
 import "./permission";
 
+ 
 const app = createApp(App);
 //// if you don't  use mock,this way is use fastmock interface.
 // if (import.meta.env.MODE == "development") {
 //   mockXHR();
 // }
-
+ 
 app.use(createPinia()).use(router).mount("#app");
