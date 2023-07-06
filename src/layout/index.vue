@@ -1,6 +1,10 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+    <div
+      v-if="device === 'mobile' && sidebar.opened"
+      class="drawer-bg"
+      @click="handleClickOutside"
+    />
     <side-bar class="sidebar-container" />
 
     <div :class="{ hasTagsView: needTagsView }" class="main-container">
@@ -17,30 +21,31 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "@/store/index";
+import { SideBar, NavBar, Settings, TagsView, AppMain } from "./components";
+import RightPanel from "@/components/RightPanel/index.vue";
 
 const m_width = ref("210px");
 const store = useStore();
 
-const showSettings = computed(() => store.settings.showSettings)
-const sidebar = computed(() => store.app.sidebar)
-const device = computed(() => store.app.device)
-const needTagsView = computed(() => store.settings.tagsView)
-const fixedHeader = computed(() => store.settings.fixedHeader)
+const showSettings = computed(() => store.settings.showSettings);
+const sidebar = computed(() => store.app.sidebar);
+const device = computed(() => store.app.device);
+const needTagsView = computed(() => store.settings.tagsView);
+const fixedHeader = computed(() => store.settings.fixedHeader);
 
 const classObj = computed(() => {
   return {
     hideSidebar: !sidebar.value.opened,
     openSidebar: sidebar.value.opened,
     withoutAnimation: sidebar.value.withoutAnimation,
-    mobile: device.value === 'mobile'
-  }
-})
+    mobile: device.value === "mobile",
+  };
+});
 const handleClickOutside = () => {
-  store.app.closeSideBar({ withoutAnimation: false })
-}
-
+  store.app.closeSideBar({ withoutAnimation: false });
+};
 </script>
 
 <style scoped lang="scss">
@@ -116,9 +121,8 @@ const handleClickOutside = () => {
   z-index: 999;
 }
 
-
 .hideSidebar .fixed-header {
-  width: calc(100% - 64px)
+  width: calc(100% - 64px);
 }
 
 .mobile .fixed-header {

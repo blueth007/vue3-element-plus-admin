@@ -2,20 +2,36 @@
   <div id="tags-view-container" class="tags-view-container">
     <scroll-pane ref="scroll" class="tags-view-wrapper" :link_tag="link_tag">
       <template #default>
-        <el-tag class="tags-view-item" :closable="!isAffix(tag)" v-for="tag in visitedViews" :key="tag.path"
-          :effect="isActive(tag) ? 'dark' : 'light'" @close="!isAffix(tag) ? closeSelectedTag(tag) : ''"
-          :class="isActive(tag) ? 'active' : ''" @contextmenu.prevent.native="openMenu(tag, $event)">
+        <el-tag
+          class="tags-view-item"
+          :closable="!isAffix(tag)"
+          v-for="tag in visitedViews"
+          :key="tag.path"
+          :effect="isActive(tag) ? 'dark' : 'light'"
+          @close="!isAffix(tag) ? closeSelectedTag(tag) : ''"
+          :class="isActive(tag) ? 'active' : ''"
+          @contextmenu.prevent.native="openMenu(tag, $event)"
+        >
           <template #default>
-            <router-link ref="link_tag" :to="{ path: tag.path + '', query: tag.query }">
+            <router-link
+              ref="link_tag"
+              :to="{ path: tag.path + '', query: tag.query }"
+            >
               {{ tag.title || tag.name }}
             </router-link>
           </template>
         </el-tag>
       </template>
     </scroll-pane>
-    <ul v-show="visible && selectedTag" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
+    <ul
+      v-show="visible && selectedTag"
+      :style="{ left: left + 'px', top: top + 'px' }"
+      class="contextmenu"
+    >
       <li @click="refreshSelectedTag(selectedTag)">Refresh</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">Close</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
+        Close
+      </li>
       <li @click="closeOthersTags">Close Others</li>
       <li @click="closeAllTags(selectedTag)">Close All</li>
     </ul>
@@ -26,7 +42,8 @@
 import { useStore } from "@/store";
 import { computed, nextTick, onMounted, ref, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
+import { ElTag } from "element-plus";
+import scrollPane from "./scrollPane.vue";
 import { useTagsViewStore } from "@/store/tagsView";
 import type { RouteItem, RouterItem } from "@/router";
 
@@ -118,7 +135,10 @@ const isActive = (route: RouteItem) => {
   return route.path === $route.path;
 };
 
-function filterAffixTags(routes: Array<RouteItem>, basePath: string = "/"): Array<RouteItem> {
+function filterAffixTags(
+  routes: Array<RouteItem>,
+  basePath: string = "/"
+): Array<RouteItem> {
   let tags: Array<RouteItem> = [];
   routes.forEach((route: any) => {
     if (route.meta && route.meta.affix) {
@@ -212,7 +232,9 @@ watch($route, (now, pre) => {
 });
 
 watchEffect(async () => {
-  visible.value ? document.body.addEventListener("click", closeMenu) : document.body.removeEventListener("click", closeMenu);
+  visible.value
+    ? document.body.addEventListener("click", closeMenu)
+    : document.body.removeEventListener("click", closeMenu);
 });
 </script>
 
@@ -262,8 +284,6 @@ watchEffect(async () => {
         }
       }
     }
-
-
   }
 
   .contextmenu {

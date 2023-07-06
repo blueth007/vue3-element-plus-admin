@@ -17,19 +17,31 @@
       </el-table-column>
       <el-table-column align="center" label="Operations">
         <template #default="scope">
-          <el-button type="primary" size="small" @click="handleEdit(scope)">Edit</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope)">Delete</el-button>
+          <el-button type="primary" size="small" @click="handleEdit(scope)"
+            >Edit</el-button
+          >
+          <el-button type="danger" size="small" @click="handleDelete(scope)"
+            >Delete</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model="dialogVisible" :title="dialogType === 'edit' ? 'Edit Role' : 'New Role'">
+    <el-dialog
+      v-model="dialogVisible"
+      :title="dialogType === 'edit' ? 'Edit Role' : 'New Role'"
+    >
       <el-form :model="role" label-width="80px" label-position="left">
         <el-form-item label="Name">
           <el-input v-model="role.name" placeholder="Role Name" />
         </el-form-item>
         <el-form-item label="Desc">
-          <el-input v-model="role.description" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" placeholder="Role Description" />
+          <el-input
+            v-model="role.description"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            type="textarea"
+            placeholder="Role Description"
+          />
         </el-form-item>
         <el-form-item label="Menus">
           <el-tree
@@ -44,7 +56,9 @@
         </el-form-item>
       </el-form>
       <div style="text-align: right">
-        <el-button type="danger" @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="danger" @click="dialogVisible = false"
+          >Cancel</el-button
+        >
         <el-button type="primary" @click="confirmRole">Confirm</el-button>
       </div>
     </el-dialog>
@@ -54,11 +68,37 @@
 <script setup lang="ts">
 import path from "path-browserify";
 import { deepClone } from "@/utils";
-import { getRoutes, getRoles, addRole, deleteRole, updateRole } from "@/api/role";
-import { computed, nextTick, onBeforeMount, onMounted, reactive, ref, toRefs } from "vue";
+import {
+  getRoutes,
+  getRoles,
+  addRole,
+  deleteRole,
+  updateRole,
+} from "@/api/role";
+import {
+  computed,
+  nextTick,
+  onBeforeMount,
+  onMounted,
+  reactive,
+  ref,
+  toRefs,
+} from "vue";
 import type { RouteItem, RouterItem } from "@/router";
 import type { RoleType } from "mock/role";
-import { ElMessage, ElMessageBox, ElTree, ElNotification } from "element-plus";
+import {
+  ElMessage,
+  ElMessageBox,
+  ElTree,
+  ElNotification,
+  ElTable,
+  ElTableColumn,
+  ElButton,
+  ElDialog,
+  ElForm,
+  ElFormItem,
+  ElInput,
+} from "element-plus";
 import type { Action } from "element-plus";
 import type Node from "element-plus/es/components/tree/src/model/node";
 
@@ -83,7 +123,15 @@ const data: any = reactive({
   },
   defaultCheckedKeys: [],
 });
-const { dialogVisible, role, checkStrictly, defaultProps, dialogType, rolesList, defaultCheckedKeys } = toRefs(data);
+const {
+  dialogVisible,
+  role,
+  checkStrictly,
+  defaultProps,
+  dialogType,
+  rolesList,
+  defaultCheckedKeys,
+} = toRefs(data);
 const treeRef = ref<InstanceType<typeof ElTree>>();
 
 const routesData = computed(() => {
@@ -113,7 +161,10 @@ const generateRoutes = (routes: Array<RouterItem>, basePath = "/") => {
     if (route.hidden) {
       continue;
     }
-    const onlyOneShowingChild_result = onlyOneShowingChild(route.children, route);
+    const onlyOneShowingChild_result = onlyOneShowingChild(
+      route.children,
+      route
+    );
 
     if (route.children && onlyOneShowingChild_result && !route.alwaysShow) {
       route = onlyOneShowingChild_result;
@@ -132,14 +183,20 @@ const generateRoutes = (routes: Array<RouterItem>, basePath = "/") => {
   return res;
 };
 // reference: src/view/layout/components/Sidebar/SidebarItem.vue
-function onlyOneShowingChild(children: Array<RouterItem> = [], parent: RouterItem) {
+function onlyOneShowingChild(
+  children: Array<RouterItem> = [],
+  parent: RouterItem
+) {
   let onlyOneChild: RouterItem = {};
   const showingChildren = children.filter((item: RouterItem) => !item.hidden);
 
   // When there is only one child route, the child route is displayed by default
   if (showingChildren.length === 1) {
     onlyOneChild = showingChildren[0];
-    onlyOneChild.path = path_reslove(parent.path as string, onlyOneChild.path as string);
+    onlyOneChild.path = path_reslove(
+      parent.path as string,
+      onlyOneChild.path as string
+    );
     return onlyOneChild;
   }
 
@@ -208,7 +265,11 @@ const handleDelete = ({ $index, row }: { $index: number; row: RoleType }) => {
   return;
 };
 
-const generateTree = (routes: Array<RouterItem>, basePath = "/", checkedKeys: string[]) => {
+const generateTree = (
+  routes: Array<RouterItem>,
+  basePath = "/",
+  checkedKeys: string[]
+) => {
   const res = [];
   for (const route of routes) {
     const routePath = path_reslove(basePath, route.path as string);
@@ -217,7 +278,10 @@ const generateTree = (routes: Array<RouterItem>, basePath = "/", checkedKeys: st
       route.children = generateTree(route.children, routePath, checkedKeys);
     }
 
-    if (checkedKeys.includes(routePath) || (route.children && route.children.length >= 1)) {
+    if (
+      checkedKeys.includes(routePath) ||
+      (route.children && route.children.length >= 1)
+    ) {
       res.push(route);
     }
   }

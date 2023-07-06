@@ -1,67 +1,83 @@
 <template>
-    <div class="components-container board">
-        <Kanban :key="1" :list="list1" :group="group" class="kanban todo" header-text="Todo" />
-        <Kanban :key="2" :list="list2" :group="group" class="kanban working" header-text="Working" />
-        <Kanban :key="3" :list="list3" :group="group" class="kanban done" header-text="Done" />
-    </div>
+  <div class="components-container board">
+    <Kanban
+      :key="1"
+      :list="list1"
+      :group="group"
+      class="kanban todo"
+      header-text="Todo"
+    />
+    <Kanban
+      :key="2"
+      :list="list2"
+      :group="group"
+      class="kanban working"
+      header-text="Working"
+    />
+    <Kanban
+      :key="3"
+      :list="list3"
+      :group="group"
+      class="kanban done"
+      header-text="Done"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, toRefs } from 'vue'
-// import Kankan from "@/components/kankan/index.vue"
+import { reactive, toRefs } from "vue";
+import Kanban from "@/components/Kanban/index.vue";
 
 const data = reactive({
-    group: 'mission',
-    list1: [
-        { name: 'Mission', id: 1 },
-        { name: 'Mission', id: 2 },
-        { name: 'Mission', id: 3 },
-        { name: 'Mission', id: 4 }
-    ],
-    list2: [
-        { name: 'Mission', id: 5 },
-        { name: 'Mission', id: 6 },
-        { name: 'Mission', id: 7 }
-    ],
-    list3: [
-        { name: 'Mission', id: 8 },
-        { name: 'Mission', id: 9 },
-        { name: 'Mission', id: 10 }
-    ]
-})
+  group: "mission",
+  list1: [
+    { name: "Mission", id: 1 },
+    { name: "Mission", id: 2 },
+    { name: "Mission", id: 3 },
+    { name: "Mission", id: 4 },
+  ],
+  list2: [
+    { name: "Mission", id: 5 },
+    { name: "Mission", id: 6 },
+    { name: "Mission", id: 7 },
+  ],
+  list3: [
+    { name: "Mission", id: 8 },
+    { name: "Mission", id: 9 },
+    { name: "Mission", id: 10 },
+  ],
+});
 
-const { list1, list2, list3, group } = toRefs(data)
-
+const { list1, list2, list3, group } = toRefs(data);
 </script>
 
 <style lang="scss">
 .board {
-    width: 1000px;
-    margin-left: 20px;
-    display: flex;
-    justify-content: space-around;
-    flex-direction: row;
-    align-items: flex-start;
+  width: 1000px;
+  margin-left: 20px;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  align-items: flex-start;
 }
 
 .kanban {
-    &.todo {
-        .board-column-header {
-            background: #4A9FF9;
-        }
+  &.todo {
+    .board-column-header {
+      background: #4a9ff9;
     }
+  }
 
-    &.working {
-        .board-column-header {
-            background: #f9944a;
-        }
+  &.working {
+    .board-column-header {
+      background: #f9944a;
     }
+  }
 
-    &.done {
-        .board-column-header {
-            background: #2ac06d;
-        }
+  &.done {
+    .board-column-header {
+      background: #2ac06d;
     }
+  }
 }
 </style>
-

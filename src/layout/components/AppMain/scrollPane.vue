@@ -1,5 +1,10 @@
 <template>
-  <el-scrollbar ref="scrollContainer" :vertical="false" class="scroll-container" @wheel.native.prevent="handleScroll">
+  <el-scrollbar
+    ref="scrollContainer"
+    :vertical="false"
+    class="scroll-container"
+    @wheel.native.prevent="handleScroll"
+  >
     <slot></slot>
   </el-scrollbar>
 </template>
@@ -8,6 +13,7 @@
 //点击 tagsview 然后滚动到点击面板位置
 import { computed, ref, watchEffect } from "vue";
 import type { RouteItem } from "@/router";
+import { ElScrollbar } from "element-plus";
 
 const tagAndTagSpacing = 4; // tagAndTagSpacing
 const scrollContainer = ref();
@@ -47,7 +53,9 @@ function moveToTarget(currentTag: any) {
   if (firstTag === currentTag) {
     scrollContainer.value!.setScrollLeft(0);
   } else if (lastTag === currentTag) {
-    scrollContainer.value!.setScrollLeft($scrollWrapper.scrollWidth - $containerWidth);
+    scrollContainer.value!.setScrollLeft(
+      $scrollWrapper.scrollWidth - $containerWidth
+    );
   } else {
     // find preTag and nextTag
     const currentIndex = tagList.findIndex((item: any) => item === currentTag);
@@ -55,13 +63,16 @@ function moveToTarget(currentTag: any) {
     const nextTag = tagList[currentIndex + 1];
 
     // the tag's offsetLeft after of nextTag
-    const afterNextTagOffsetLeft = nextTag.$el.offsetLeft + nextTag.$el.offsetWidth + tagAndTagSpacing;
+    const afterNextTagOffsetLeft =
+      nextTag.$el.offsetLeft + nextTag.$el.offsetWidth + tagAndTagSpacing;
 
     // the tag's offsetLeft before of prevTag
     const beforePrevTagOffsetLeft = prevTag.$el.offsetLeft - tagAndTagSpacing;
 
     if (afterNextTagOffsetLeft > $scrollWrapper.scrollLeft + $containerWidth) {
-      scrollContainer.value!.setScrollLeft(afterNextTagOffsetLeft - $containerWidth);
+      scrollContainer.value!.setScrollLeft(
+        afterNextTagOffsetLeft - $containerWidth
+      );
     } else if (beforePrevTagOffsetLeft < $scrollWrapper.scrollLeft) {
       scrollContainer.value!.setScrollLeft(beforePrevTagOffsetLeft);
     }

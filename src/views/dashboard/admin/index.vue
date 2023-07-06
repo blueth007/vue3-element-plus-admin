@@ -38,10 +38,24 @@
       >
         <transaction-table />
       </el-col>
-      <el-col :xs="{ span: 24 }" :sm="{ span: 12 }" :md="{ span: 12 }" :lg="{ span: 6 }" :xl="{ span: 6 }" style="margin-bottom: 30px">
+      <el-col
+        :xs="{ span: 24 }"
+        :sm="{ span: 12 }"
+        :md="{ span: 12 }"
+        :lg="{ span: 6 }"
+        :xl="{ span: 6 }"
+        style="margin-bottom: 30px"
+      >
         <todo-list />
       </el-col>
-      <el-col :xs="{ span: 24 }" :sm="{ span: 12 }" :md="{ span: 12 }" :lg="{ span: 6 }" :xl="{ span: 6 }" style="margin-bottom: 30px">
+      <el-col
+        :xs="{ span: 24 }"
+        :sm="{ span: 12 }"
+        :md="{ span: 12 }"
+        :lg="{ span: 6 }"
+        :xl="{ span: 6 }"
+        style="margin-bottom: 30px"
+      >
         <box-card />
       </el-col>
     </el-row>
@@ -50,6 +64,17 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
+import { ElCol, ElRow } from "element-plus";
+import githubCorner from "@/components/GithubCorner/index.vue";
+import PanelGroup from "./components/PanelGroup.vue";
+import LineChart from "./components/LineChart.vue";
+import RaddarChart from "./components/RaddarChart.vue";
+import PieChart from "./components/PieChart.vue";
+import BarChart from "./components/BarChart.vue";
+import TransactionTable from "./components/TransactionTable.vue";
+import TodoList from "./components/TodoList/index.vue";
+import BoxCard from "./components/BoxCard.vue";
+
 const lineChartDataDefault: { [key: string]: any } = {
   newVisitis: {
     expectedData: [100, 120, 161, 134, 105, 160, 165],

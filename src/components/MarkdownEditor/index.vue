@@ -1,20 +1,29 @@
 <template>
   <div>
-    <div :id="id">
-    </div>
+    <div :id="id"></div>
     <el-button @click="getHTML">getHTML</el-button>
   </div>
 </template>
 
 <script setup lang="ts">
-
 import "@toast-ui/editor/dist/toastui-editor.css";
 import "@toast-ui/editor/dist/i18n/zh-cn";
-import Editor, { EditorCore, EditorOptions, EditorType } from "@toast-ui/editor";
+import Editor, {
+  EditorCore,
+  EditorOptions,
+  EditorType,
+} from "@toast-ui/editor";
 import defaultOptions from "./default-options";
-
-import { computed, nextTick, onMounted, onUnmounted, PropType, reactive, watch } from "vue";
-
+import { ElButton } from "element-plus";
+import {
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  PropType,
+  reactive,
+  watch,
+} from "vue";
 
 const props = defineProps({
   modelValue: {
@@ -25,7 +34,11 @@ const props = defineProps({
     type: String,
     required: false,
     default: () => {
-      return "markdown-editor-" + +new Date() + ((Math.random() * 1000).toFixed(0) + "");
+      return (
+        "markdown-editor-" +
+        +new Date() +
+        ((Math.random() * 1000).toFixed(0) + "")
+      );
     },
   },
   options: {
@@ -46,7 +59,7 @@ const props = defineProps({
   language: {
     type: String,
     required: false,
-    default: "en-US",//'zh-CN'
+    default: "en-US", //'zh-CN'
   },
 });
 
@@ -86,9 +99,8 @@ watch(
   () => props.height,
   (newValue) => {
     data.editor!.setHeight(newValue);
-  }, {
-
-}
+  },
+  {}
 );
 
 watch(
@@ -97,7 +109,6 @@ watch(
     data.editor!.changeMode(newValue);
   }
 );
-
 
 onMounted(() => {
   initEditor();
@@ -112,8 +123,8 @@ function initEditor() {
   data.editor = new Editor({
     el: $el,
     ...editorOptions.value,
-    initialValue: props.modelValue
-  })
+    initialValue: props.modelValue,
+  });
   data.editor.on("change", () => {
     emit("update:modelValue", data.editor!.getMarkdown());
   });
@@ -139,12 +150,16 @@ function setHtml(value: any) {
 
 function getHTML() {
   // console.log(data.editor!.getHTML())
-  return document.getElementById(props.id)?.querySelector(".toastui-editor-contents")?.innerHTML || "111"
+  return (
+    document.getElementById(props.id)?.querySelector(".toastui-editor-contents")
+      ?.innerHTML || "111"
+  );
   // return data.editor!.getHTML(); //Error: Uncaught RangeError: Applying a mismatched transaction
 }
 defineExpose({
-  getMarkdown, getHTML
-})
+  getMarkdown,
+  getHTML,
+});
 </script>
 
 <style scoped></style>

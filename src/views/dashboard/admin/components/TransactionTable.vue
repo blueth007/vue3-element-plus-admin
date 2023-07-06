@@ -6,7 +6,9 @@
       </template>
     </el-table-column>
     <el-table-column label="Price" width="195" align="center">
-      <template #default="scope"> ¥{{ toThousandFilter(scope.row.price) }} </template>
+      <template #default="scope">
+        ¥{{ toThousandFilter(scope.row.price) }}
+      </template>
     </el-table-column>
     <el-table-column label="Status" width="100" align="center">
       <template #default="{ row }">
@@ -22,7 +24,8 @@
 import { transactionList } from "@/api/remote-search";
 import { ref, onMounted } from "vue";
 import { toThousandFilter } from "@/utils/filters";
-import type { TagProps } from 'element-plus'
+import type { TagProps } from "element-plus";
+import { ElTable, ElTableColumn, ElTag } from "element-plus";
 type ListItem = {
   order_no: string;
   timestamp: string;
@@ -43,7 +46,7 @@ function fetchData() {
 }
 
 function statusFilter(status: string) {
-  const statusMap: { [key: string]: TagProps['type'] } = {
+  const statusMap: { [key: string]: TagProps["type"] } = {
     success: "success",
     pending: "danger",
   };

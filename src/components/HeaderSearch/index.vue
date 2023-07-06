@@ -1,9 +1,31 @@
 <template>
-  <div :class="{ show: show }" class="header-search inline-flex mx-3 items-center">
-    <svg-icon class-name="search-icon" icon-class="search" @click.stop="click" />
-    <el-select ref="headerSearchSelect" v-model="search" :remote-method="querySearch" filterable default-first-option
-      remote :loading="loading" placeholder="Search" class="header-search-select" @change="change">
-      <el-option v-for="item in options" :key="item.path" :value="item" :label="item.title.join(' > ')" />
+  <div
+    :class="{ show: show }"
+    class="header-search inline-flex mx-3 items-center"
+  >
+    <svg-icon
+      class-name="search-icon"
+      icon-class="search"
+      @click.stop="click"
+    />
+    <el-select
+      ref="headerSearchSelect"
+      v-model="search"
+      :remote-method="querySearch"
+      filterable
+      default-first-option
+      remote
+      :loading="loading"
+      placeholder="Search"
+      class="header-search-select"
+      @change="change"
+    >
+      <el-option
+        v-for="item in options"
+        :key="item.path"
+        :value="item"
+        :label="item.title.join(' > ')"
+      />
     </el-select>
   </div>
 </template>
@@ -16,6 +38,8 @@ import path from "path-browserify";
 import { ref, computed, watch, onMounted, watchEffect, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/store";
+import { ElSelect, ElOption } from "element-plus";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 type T_path = { path: string; title: Array<string> };
 
@@ -38,7 +62,9 @@ onMounted(() => {
   initFuse(searchPool.value);
 });
 watch(show, (n, p) => {
-  n ? document.body.addEventListener("click", closed) : document.body.removeEventListener("click", closed);
+  n
+    ? document.body.addEventListener("click", closed)
+    : document.body.removeEventListener("click", closed);
 });
 watch(routes, () => {
   searchPool.value = generateRoutes(routes.value);
@@ -85,7 +111,11 @@ function initFuse(list: any) {
 }
 //     // Filter out the routes that can be displayed in the sidebar
 //     // And generate the internationalized title
-function generateRoutes(routes: any[], basePath = "/", prefixTitle: Array<string> = []): Array<T_path> {
+function generateRoutes(
+  routes: any[],
+  basePath = "/",
+  prefixTitle: Array<string> = []
+): Array<T_path> {
   let res: Array<T_path> = [];
 
   for (const router of routes) {

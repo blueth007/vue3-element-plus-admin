@@ -27,9 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useStore } from '@/store';
-
+import { ref } from "vue";
+import { useStore } from "@/store";
+import { ElRow, ElCol, ElTabs, ElTabPane, ElCard } from "element-plus";
 import UserCard from "./components/UserCard.vue";
 import Activity from "./components/Activity.vue";
 import Timeline from "./components/Timeline.vue";
@@ -37,13 +37,13 @@ import Account from "./components/Account.vue";
 
 const store = useStore();
 
-const user = ref<{ name: string, role: string, email: string, avatar: string }>({
-  name: store.name,
-  role: store.roles.join(' | '),
-  email: "admin@test.com",
-  avatar: store.avatar
-});
+const user = ref<{ name: string; role: string; email: string; avatar: string }>(
+  {
+    name: store.name,
+    role: store.roles.join(" | "),
+    email: "admin@test.com",
+    avatar: store.avatar,
+  }
+);
 const activeTab = ref<string>("activity");
-
-
 </script>

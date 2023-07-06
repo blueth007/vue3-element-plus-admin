@@ -1,5 +1,8 @@
-<template  >
-  <div style="padding:30px;">
+<template>
+  <div style="padding: 30px">
     <el-alert :closable="false" title="menu 1-3" type="success" />
   </div>
 </template>
+<script setup lang="ts">
+import { ElAlert } from "element-plus";
+</script>

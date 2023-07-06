@@ -18,11 +18,18 @@
           <li class="link-type">
             <a href="https://www.taobao.com/">随便看看</a>
           </li>
-          <li><a href="#" @click.prevent="dialogVisible = true">点我看图</a></li>
+          <li>
+            <a href="#" @click.prevent="dialogVisible = true">点我看图</a>
+          </li>
         </ul>
       </el-col>
       <el-col :span="12">
-        <img :src="errGif" width="313" height="428" alt="Girl has dropped her ice cream." />
+        <img
+          :src="errGif"
+          width="313"
+          height="428"
+          alt="Girl has dropped her ice cream."
+        />
       </el-col>
     </el-row>
     <el-dialog v-model="dialogVisible" title="随便看">
@@ -35,14 +42,15 @@
 import err_Gif from "@/assets/401_images/401.gif";
 import { toRefs, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
-
+import { ElDialog, ElRow, ElCol, ElButton } from "element-plus";
 const $route = useRoute();
 const $router = useRouter();
 
 const { errGif, ewizardClap, dialogVisible } = toRefs(
   reactive({
     errGif: err_Gif + "?" + +new Date(),
-    ewizardClap: "https://wpimg.wallstcn.com/007ef517-bafd-4066-aae4-6883632d9646",
+    ewizardClap:
+      "https://wpimg.wallstcn.com/007ef517-bafd-4066-aae4-6883632d9646",
     dialogVisible: false,
   })
 );

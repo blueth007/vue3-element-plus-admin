@@ -1,7 +1,9 @@
 <template>
   <el-card class="box-card-component" style="margin-left: 8px">
     <div slot="header" class="box-card-header">
-      <img src="https://wpimg.wallstcn.com/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png" />
+      <img
+        src="https://wpimg.wallstcn.com/e7d23d71-cf19-4b90-a1cc-f56af8c0903d.png"
+      />
     </div>
     <div style="position: relative">
       <pan-thumb :image="avatar" class="panThumb" />
@@ -29,6 +31,10 @@
 <script lang="ts" setup>
 import { reactive } from "vue";
 import { useStore } from "@/store";
+import { ElCard, ElProgress } from "element-plus";
+import PanThumb from "@/components/PanThumb/index.vue";
+import Mallki from "@/components/TextHoverEffect/Mallki.vue";
+
 const { name, avatar, roles } = useStore();
 const data = reactive({
   statisticsData: {
@@ -44,7 +50,6 @@ function statusFilter(status: string) {
   };
   return statusMap[status];
 }
- 
 </script>
 
 <style lang="scss" scoped>
@@ -106,4 +111,5 @@ function statusFilter(status: string) {
       display: none;
     }
   }
-}</style>
+}
+</style>

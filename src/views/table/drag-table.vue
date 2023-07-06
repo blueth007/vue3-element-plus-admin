@@ -1,8 +1,17 @@
 <template>
   <div class="app-container" v-if="list.length != 0">
     <!-- Note that row-key is necessary to get a correct row order. -->
-    <el-table ref="dragTable" v-loading="listLoading" :data="list" row-key="id" border fit highlight-current-row
-      style="width: 100%">
+    <el-table
+      ref="dragTable"
+      v-loading="listLoading"
+      element-loading-text="Loading..."
+      :data="list"
+      row-key="id"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+    >
       <el-table-column align="center" label="ID" width="65">
         <template #default="{ row }">
           <span>{{ row.id }}</span>
@@ -11,7 +20,7 @@
 
       <el-table-column width="180px" align="center" label="Date">
         <template #default="{ row }">
-          <span>{{ parseTime(row.timestamp, '{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ parseTime(row.timestamp, "{y}-{m}-{d} {h}:{i}") }}</span>
         </template>
       </el-table-column>
 
@@ -30,7 +39,12 @@
       <el-table-column width="120px" label="Importance">
         <template #default="{ row }">
           <span v-if="row.importance">
-            <svg-icon v-for="n in  parseInt(row.importance)" :key="n" icon-class="star" class="icon-star" />
+            <svg-icon
+              v-for="n in parseInt(row.importance)"
+              :key="n"
+              icon-class="star"
+              class="icon-star"
+            />
           </span>
         </template>
       </el-table-column>
@@ -53,9 +67,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="show-d">
-      <el-tag>The default order :</el-tag> {{ oldList }}
-    </div>
+    <div class="show-d"><el-tag>The default order :</el-tag> {{ oldList }}</div>
     <div class="show-d">
       <el-tag>The after dragging order :</el-tag> {{ newList }}
     </div>
@@ -63,12 +75,15 @@
 </template>
 
 <script setup lang="ts">
-import { fetchList } from '@/api/article'
-import Sortable from 'sortablejs'
-import { parseTime } from '@/utils/index'
-import { nextTick, onMounted, reactive, ref, toRefs } from 'vue'
-import type { TagProps } from 'element-plus'
-const dragTable = ref()
+import { fetchList } from "@/api/article";
+import Sortable from "sortablejs";
+import { parseTime } from "@/utils/index";
+import { nextTick, onMounted, reactive, ref, toRefs } from "vue";
+import type { TagProps } from "element-plus";
+import { ElTable, ElTableColumn, ElTag, ElLoading } from "element-plus";
+import SvgIcon from "@/components/SvgIcon/index.vue";
+
+const dragTable = ref();
 
 const data = reactive({
   list: [],
@@ -76,70 +91,70 @@ const data = reactive({
   listLoading: true,
   listQuery: {
     page: 1,
-    limit: 10
+    limit: 10,
   },
   sortable: null as Sortable | null,
   oldList: [] as string[],
   newList: [] as string[],
-})
+});
 
-const { listLoading, list, oldList, newList } = toRefs(data)
+const { listLoading, list, oldList, newList } = toRefs(data);
 
 onMounted(() => {
-  getList()
-})
-
+  getList();
+});
 
 async function getList() {
-  data.listLoading = true
-  const { data: result } = await fetchList(data.listQuery)
+  data.listLoading = true;
+  const { data: result } = await fetchList(data.listQuery);
   // console.log("result:", result)
-  data.list = result.items
-  data.total = result.total
-  data.listLoading = false
-  data.oldList = data.list.map((v: any) => v.id)
-  data.newList = data.oldList.slice()
+  data.list = result.items;
+  data.total = result.total;
+  data.listLoading = false;
+  data.oldList = data.list.map((v: any) => v.id);
+  data.newList = data.oldList.slice();
   nextTick(() => {
-    setSort()
-  })
+    setSort();
+  });
 }
 
 function setSort() {
-  const el = dragTable.value?.$el.querySelectorAll('.el-table__body-wrapper table > tbody')[0]
+  const el = dragTable.value?.$el.querySelectorAll(
+    ".el-table__body-wrapper table > tbody"
+  )[0];
   data.sortable = Sortable.create(el, {
-    ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
+    ghostClass: "sortable-ghost", // Class name for the drop placeholder,
     setData: function (dataTransfer) {
       // to avoid Firefox bug
       // Detail see : https://github.com/RubaXa/Sortable/issues/1012
-      dataTransfer.setData('Text', '')
+      dataTransfer.setData("Text", "");
     },
-    onEnd: evt => {
-      const targetRow = data.list.splice(evt.oldIndex as number, 1)[0]
-      data.list.splice(evt.newIndex as number, 0, targetRow)
+    onEnd: (evt) => {
+      const targetRow = data.list.splice(evt.oldIndex as number, 1)[0];
+      data.list.splice(evt.newIndex as number, 0, targetRow);
 
       // for show the changes, you can delete in you code
-      const tempIndex = data.newList.splice(evt.oldIndex as number, 1)[0]
-      data.newList.splice(evt.newIndex as number, 0, tempIndex)
-    }
-  })
+      const tempIndex = data.newList.splice(evt.oldIndex as number, 1)[0];
+      data.newList.splice(evt.newIndex as number, 0, tempIndex);
+    },
+  });
 }
 
 function statusFilter(status: string) {
-  const statusMap: { [key: string]:  TagProps['type'] } = {
-    published: 'success',
-    draft: 'info',
-    deleted: 'danger'
-  }
-  return statusMap[status]
+  const statusMap: { [key: string]: TagProps["type"] } = {
+    published: "success",
+    draft: "info",
+    deleted: "danger",
+  };
+  return statusMap[status];
 }
 </script>
 
-<style scoped >
+<style scoped>
 .sortable-ghost {
-  opacity: .8;
+  opacity: 0.8;
   color: #fff !important;
   background: #42b983 !important;
-
 }
 
 .icon-star {

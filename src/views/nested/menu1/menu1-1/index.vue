@@ -6,5 +6,5 @@
   </div>
 </template>
 <script setup lang="ts">
-
+import { ElAlert } from 'element-plus';
 </script>

@@ -16,14 +16,20 @@
           <svg width="38.161" height="22.03">
             <path
               d="M2.017 10.987Q-.563 7.513.157 4.754C.877 1.994 2.976.135 6.164.093 16.4-.04 22.293-.022 32.048.093c3.501.042 5.48 2.081 6.02 4.661q.54 2.579-2.051 6.233-8.612 10.979-16.664 11.043-8.053.063-17.336-11.043z"
-              fill="#243946"></path>
+              fill="#243946"
+            ></path>
           </svg>
           <div class="glow"></div>
         </div>
         <div class="mouth">
           <svg class="smile" viewBox="-2 -2 84 23" width="84" height="23">
-            <path d="M0 0c3.76 9.279 9.69 18.98 26.712 19.238 17.022.258 10.72.258 28 0S75.959 9.182 79.987.161"
-              fill="none" stroke-width="3" stroke-linecap="square" stroke-miterlimit="3"></path>
+            <path
+              d="M0 0c3.76 9.279 9.69 18.98 26.712 19.238 17.022.258 10.72.258 28 0S75.959 9.182 79.987.161"
+              fill="none"
+              stroke-width="3"
+              stroke-linecap="square"
+              stroke-miterlimit="3"
+            ></path>
           </svg>
           <div class="mouth-hole"></div>
           <div class="tongue breath">
@@ -65,8 +71,13 @@
       </div>
       <el-form ref="refForm" :model="loginForm" :rules="rules" status-icon>
         <el-form-item prop="username">
-          <el-input v-model.trim="loginForm.username" class="w-full username" placeholder="用户名" @blur="usernameBlur"
-            @focus="usernameFocus">
+          <el-input
+            v-model.trim="loginForm.username"
+            class="w-full username"
+            placeholder="用户名"
+            @blur="usernameBlur"
+            @focus="usernameFocus"
+          >
             <template #prefix>
               <el-icon class="text-lg">
                 <span class="iconify el-icon" data-icon="ep:user"></span>
@@ -75,23 +86,36 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model.trim="loginForm.password" :type="isShowPassword ? 'text' : 'password'" class="w-full password"
-            placeholder="密码" @focus="passwordFocus" @blur="passwordBlur">
+          <el-input
+            v-model.trim="loginForm.password"
+            :type="isShowPassword ? 'text' : 'password'"
+            class="w-full password"
+            placeholder="密码"
+            @focus="passwordFocus"
+            @blur="passwordBlur"
+          >
             <template #prefix>
               <el-icon class="text-lg">
-                <span class="iconify el-icon" data-icon="ep:lock" class-name="disable"></span>
+                <span
+                  class="iconify el-icon"
+                  data-icon="ep:lock"
+                  class-name="disable"
+                ></span>
               </el-icon>
             </template>
             <template #suffix>
-
-              <svg-icon :icon-class="isShowPassword ? 'eye' : 'eye-open'" class-name="absolute right-2"
-                @click="handleHiddenPassword" />
-
+              <svg-icon
+                :icon-class="isShowPassword ? 'eye' : 'eye-open'"
+                class-name="absolute right-2"
+                @click="handleHiddenPassword"
+              />
             </template>
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="sub-btn" type="primary" @click="submitForm(refForm)">登录</el-button>
+          <el-button class="sub-btn" type="primary" @click="submitForm(refForm)"
+            >登录</el-button
+          >
           <el-button @click="resetForm(refForm)">重置</el-button>
         </el-form-item>
       </el-form>
@@ -121,15 +145,17 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, watch } from "vue";
 // import { login } from "@/api/user";
+import { ElFormItem, ElForm, ElIcon, ElButton, ElInput } from "element-plus";
 import type { FormInstance, FormRules } from "element-plus";
 import { useRoute, useRouter } from "vue-router";
 // import { useUserStore } from "@/store/user";
 import { useStore } from "@/store";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 const $route = useRoute();
 const $router = useRouter();
 // const user = useUserStore();
-const store = useStore()
+const store = useStore();
 const refForm = ref<FormInstance>();
 const loginForm = reactive({
   username: "admin",
@@ -142,7 +168,7 @@ watch([() => loginForm.username], ([nw]) => {
   let length = Math.min(nw.length - 16, 19);
   rotateHead.value = `${-length}deg`;
 });
-onMounted(async () => { });
+onMounted(async () => {});
 
 const rules = reactive<FormRules>({
   username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
@@ -161,7 +187,10 @@ const submitForm = (formEl: FormInstance | undefined) => {
         .login(loginForm)
         .then(() => {
           const query = $route.query;
-          $router.push({ path: (query.redirect as string) || "/", query: getOtherQuery(query) });
+          $router.push({
+            path: (query.redirect as string) || "/",
+            query: getOtherQuery(query),
+          });
         })
         .catch((err: any) => {
           alert(err || err.message);
@@ -243,7 +272,7 @@ function getOtherQuery(query: { [key: string]: any }) {
     }
   }
 
-  .el-form-item+.el-form-item {
+  .el-form-item + .el-form-item {
     margin: 32px 0;
   }
 
@@ -638,7 +667,6 @@ function getOtherQuery(query: { [key: string]: any }) {
 }
 
 @-webkit-keyframes breath {
-
   0%,
   100% {
     transform: rotateX(0deg);
@@ -650,7 +678,6 @@ function getOtherQuery(query: { [key: string]: any }) {
 }
 
 @keyframes breath {
-
   0%,
   100% {
     transform: rotateX(0deg);

@@ -1,21 +1,27 @@
 <template>
-  <el-breadcrumb separator="/" class="bread_crumb inline-flex mx-2 text-lg float-left">
+  <el-breadcrumb
+    separator="/"
+    class="bread_crumb inline-flex mx-2 text-lg float-left"
+  >
     <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
-      <span v-if="item.redirect === 'noRedirect' || index == levelList.length - 1" class="no-redirect">{{ item.meta?.title }}</span>
+      <span
+        v-if="item.redirect === 'noRedirect' || index == levelList.length - 1"
+        class="no-redirect"
+        >{{ item.meta?.title }}</span
+      >
       <a v-else @click.prevent="handleLink(item)">{{ item.meta?.title }}</a>
     </el-breadcrumb-item>
   </el-breadcrumb>
 </template>
 
 <script setup lang="ts">
+import { ElBreadcrumb, ElBreadcrumbItem } from "element-plus";
 import { compile } from "path-to-regexp";
 import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 type RouteMatched = Partial<(typeof $route.matched)[0]>;
 const $route = useRoute();
 const $router = useRouter();
-
-
 
 const levelList = ref<Array<RouteMatched>>([]);
 function handleLink(item: RouteMatched) {
@@ -42,14 +48,21 @@ watch($route, (n, p) => {
 });
 
 const getBread = () => {
-  let matched = $route.matched.filter((item) => item.meta && item.meta.title) as Array<RouteMatched>;
+  let matched = $route.matched.filter(
+    (item) => item.meta && item.meta.title
+  ) as Array<RouteMatched>;
   const first = matched[0];
 
   if (!isDashboard(first)) {
-    matched = [{ path: "/dashboard", meta: { title: "Dashboard" } }, ...matched];
+    matched = [
+      { path: "/dashboard", meta: { title: "Dashboard" } },
+      ...matched,
+    ];
   }
 
-  levelList.value = matched.filter((item) => item.meta && item.meta.title && item.meta.breadcrumb !== false);
+  levelList.value = matched.filter(
+    (item) => item.meta && item.meta.title && item.meta.breadcrumb !== false
+  );
 };
 const isDashboard = (view: any) => {
   const name = $route && ($route.name as string);

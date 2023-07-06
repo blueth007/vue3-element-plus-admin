@@ -1,13 +1,16 @@
 <template>
   <div>
-    <svg-icon :icon-class="isFullscreen ? 'exit-fullscreen' : 'fullscreen'" @click="handleFull" />
+    <svg-icon
+      :icon-class="isFullscreen ? 'exit-fullscreen' : 'fullscreen'"
+      @click="handleFull"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import screenfull from "screenfull";
-
+import SvgIcon from "@/components/SvgIcon/index.vue";
 const isFullscreen = ref(false);
 
 onMounted(() => {

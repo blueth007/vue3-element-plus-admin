@@ -5,6 +5,7 @@
 </template>
 
 <script lang="ts" setup>
+import SwitchRoles from "./components/SwitchRoles.vue";
 import { useRouter } from "vue-router";
 const $router = useRouter();
 

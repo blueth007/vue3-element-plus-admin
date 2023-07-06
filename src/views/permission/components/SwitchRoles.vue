@@ -10,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElRadioGroup, ElRadioButton } from "element-plus";
 import { ref, computed } from "vue";
 import { useStore } from "@/store";
 import { useUserStore } from "@/store/user";
