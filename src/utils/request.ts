@@ -2,7 +2,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useStore } from "@/store";
-import { useUserStore } from "@/store/user";
+import { useUserStore } from "@/store/modules/user";
 import { getToken } from "@/utils/auth";
 
 const url1 = "https://www.fastmock.site/mock/eff6a71b31840f4dad196186960edc97/data";

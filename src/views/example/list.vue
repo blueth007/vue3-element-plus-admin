@@ -85,6 +85,7 @@ import Pagination from "@/components/Pagination/index.vue"; // Secondary package
 import type { TagProps } from "element-plus";
 import { reactive, toRefs } from "vue";
 import { ElTableColumn, ElTable, ElTag, ElButton } from "element-plus";
+import { vLoading } from 'element-plus/es/components/loading/src/directive'
 
 const data = reactive({
   list: [],

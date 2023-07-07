@@ -50,7 +50,6 @@ export const useTagsViewStore = defineStore("tagsView", {
         //   }
         // }
         this.visitedViews = this.visitedViews.filter((v) => v.path !== view.path);
-        console.log("deleted:", view, this.visitedViews);
         resolve([...this.visitedViews]);
       });
     },

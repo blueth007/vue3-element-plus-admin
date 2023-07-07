@@ -1,27 +1,15 @@
 <template>
   <div class="upload-container">
-    <el-upload
-      :data="dataObj"
-      :multiple="false"
-      :show-file-list="false"
-      :on-success="handleImageSuccess"
-      :on-change="handleChange"
-      :on-remove="handleRemove"
-      :http-request="uploadRequest"
-      class="image-uploader"
-      drag
-      action="https://httpbin.org/post"
-    >
+    <el-upload :data="dataObj" :multiple="false" :show-file-list="false" :on-success="handleImageSuccess"
+      :on-change="handleChange" :on-remove="handleRemove" :http-request="uploadRequest" class="image-uploader" drag
+      action="https://httpbin.org/post">
       <i class="el-icon-upload" />
       <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
     </el-upload>
     <div class="image-preview image-app-preview">
       <div v-show="imageUrl.length > 1" class="image-preview-wrapper">
         <img :src="imageUrl" />
-        <div
-          class="image-preview-action flex justify-center items-center"
-          @click="removeImage"
-        >
+        <div class="image-preview-action flex justify-center items-center" @click="removeImage">
           <!-- <i class="el-icon-delete"  /> -->
           <span class="iconify el-icon-delete" data-icon="ep:delete"></span>
         </div>
@@ -30,10 +18,7 @@
     <div class="image-preview">
       <div v-show="imageUrl.length > 1" class="image-preview-wrapper">
         <img :src="imageUrl" />
-        <div
-          class="image-preview-action flex justify-center items-center"
-          @click.native="removeImage"
-        >
+        <div class="image-preview-action flex justify-center items-center" @click.native="removeImage">
           <span class="iconify el-icon-delete" data-icon="ep:delete"></span>
         </div>
       </div>
@@ -48,8 +33,8 @@ import type {
   UploadFile,
   UploadProps,
   UploadUserFile,
-  ElUpload,
 } from "element-plus";
+import { ElUpload } from "element-plus"
 import request from "@/utils/request";
 
 const props = defineProps({

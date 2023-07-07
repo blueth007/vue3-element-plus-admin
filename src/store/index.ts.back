@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useUserStore } from "./user";
-import { useTagsViewStore } from "@/store/tagsView";
-import { usePermissionStore } from "@/store/permission";
+import { useTagsViewStore } from "@/store/modules/tagsView";
+import { usePermissionStore } from "@/store/modules/permission";
 
 export const useStore = defineStore("store2", () => {
   const permission = usePermissionStore();

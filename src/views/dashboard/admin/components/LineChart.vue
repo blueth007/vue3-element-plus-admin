@@ -4,11 +4,15 @@
 
 <script lang="ts" setup>
 import { onMounted, Ref, ref, computed, nextTick, watchEffect, watch } from "vue";
-import type { EChartsOption } from "@/components/Echarts/useEchart";
-import useChart, { ThemeType } from "@/components/Echarts/useEchart";
+import type { ECOption } from "@/components/Echarts/baseEcharts";
+import useECharts, { echarts } from "@/components/Echarts/useEcharts";
+import { LegendComponent, LegendComponentOption } from "echarts/components";
+import { LineChart, LineSeriesOption } from 'echarts/charts';
 
+echarts.use([LineChart, LegendComponent]);
+type EChartsOption = echarts.ComposeOption<ECOption | LineSeriesOption | LegendComponentOption>
 const chartEl_line = ref<HTMLDivElement | null>(null);
-const { setOption, showLoading } = useChart(chartEl_line as Ref<HTMLDivElement>, true, true, ThemeType.Light);
+const { setOption, showLoading } = useECharts(chartEl_line as Ref<HTMLDivElement>, true, true,);
 
 const props = defineProps({
   className: {

@@ -3,11 +3,14 @@
 </template>
 
 <script setup lang="ts">
-import * as echarts from "echarts"
-import type { EChartsOption } from "../Echarts/useEchart";
-
+import type { ECOption } from "../Echarts/baseEcharts";
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import useChart from "../Echarts/useEchart";
+import useECharts, { echarts } from "../Echarts/useEcharts";
+import { LegendComponent, LegendComponentOption } from "echarts/components";
+import { LineChart, LineSeriesOption } from 'echarts/charts';
+
+type EChartsOption = echarts.ComposeOption<ECOption | LineSeriesOption | LegendComponentOption>
+echarts.use([LineChart, LegendComponent])
 
 const myChart = ref()
 const props = defineProps({
@@ -31,7 +34,7 @@ const props = defineProps({
 
 
 function initChart() {
-    const { setOption, showLoading, hideLoading, getInstance } = useChart(document.getElementById(props.id) as HTMLElement, true, true);// echarts.init(document.getElementById(props.id))
+    const { setOption, showLoading, hideLoading, getInstance } = useECharts(document.getElementById(props.id) as HTMLElement, true, true);// echarts.init(document.getElementById(props.id))
     myChart.value = getInstance()
     showLoading()
     nextTick(() => {

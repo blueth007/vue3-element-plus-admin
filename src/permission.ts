@@ -2,8 +2,8 @@ import router from "./router";
 import { getToken } from "./utils/auth";
 // store
 import { useStore } from "@/store";
-import { usePermissionStore } from "@/store/permission";
-import { useUserStore } from "./store/user";
+import { usePermissionStore } from "@/store/modules/permission";
+import { useUserStore } from "./store/modules/user";
 import getPageTitle from "@/utils/get-page-title";
 
 import NProgress from "nprogress"; // progress bar

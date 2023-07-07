@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import {ElInput,ElIcon} from 'element-plus'
 
 const props = defineProps({
   modelValue: {

@@ -1,15 +1,11 @@
 <template>
   <div class="social-signup-container">
     <div class="sign-btn" @click="wechatHandleClick('wechat')">
-      <span class="wx-svg-container"
-        ><svg-icon icon-class="wechat" class="icon"
-      /></span>
+      <span class="wx-svg-container"><svg-icon icon-class="wechat" class="icon" /></span>
       WeChat
     </div>
     <div class="sign-btn" @click="tencentHandleClick('tencent')">
-      <span class="qq-svg-container"
-        ><svg-icon icon-class="qq" class="icon"
-      /></span>
+      <span class="qq-svg-container"><svg-icon icon-class="qq" class="icon" /></span>
       QQ
     </div>
   </div>
@@ -17,7 +13,6 @@
 
 <script setup lang="ts">
 // import openWindow from '@/utils/open-window'
-// import { useStore } from '@/store/_index'
 import SvgIcon from "@/components/SvgIcon/index.vue";
 
 // const store = useStore()

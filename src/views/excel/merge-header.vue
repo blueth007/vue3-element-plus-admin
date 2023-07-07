@@ -58,6 +58,7 @@ import { fetchList } from "@/api/article";
 import { parseTime } from "@/utils";
 import { toRefs, reactive, onBeforeMount } from "vue";
 import { ElButton, ElTag, ElTable, ElTableColumn } from "element-plus";
+import { vLoading } from 'element-plus/es/components/loading/src/directive'
 
 const data = reactive({
   list: [] as any[],

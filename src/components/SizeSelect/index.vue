@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref } from "vue";
 import { useStore } from "@/store";
-import { useTagsViewStore } from "@/store/tagsView";
+import { useTagsViewStore } from "@/store/modules/tagsView";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { ElDropdown, ElDropdownMenu, ElDropdownItem } from "element-plus";

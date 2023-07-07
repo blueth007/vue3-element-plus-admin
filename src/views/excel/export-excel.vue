@@ -70,6 +70,7 @@ import AutoWidthOption from "./components/AutoWidthOption.vue";
 import BookTypeOption from "./components/BookTypeOption.vue";
 import { ElButton, ElTag, ElTable, ElTableColumn } from "element-plus";
 import { onBeforeMount, reactive, toRefs } from "vue";
+import { vLoading } from 'element-plus/es/components/loading/src/directive'
 
 const data = reactive({
   list: [] as any[],

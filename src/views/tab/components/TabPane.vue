@@ -66,6 +66,7 @@ import { onBeforeMount, reactive, toRefs } from "vue";
 import type { TagProps } from "element-plus";
 import { ElTable, ElTableColumn, ElTag } from "element-plus";
 import SvgIcon from "@/components/SvgIcon/index.vue";
+import { vLoading } from 'element-plus/es/components/loading/src/directive'
 
 const props = defineProps({
   type: {

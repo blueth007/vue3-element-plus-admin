@@ -44,7 +44,7 @@ import { computed, nextTick, onMounted, ref, watch, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElTag } from "element-plus";
 import scrollPane from "./scrollPane.vue";
-import { useTagsViewStore } from "@/store/tagsView";
+import { useTagsViewStore } from "@/store/modules/tagsView";
 import type { RouteItem, RouterItem } from "@/router";
 
 const $route = useRoute();

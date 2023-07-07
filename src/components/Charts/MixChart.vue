@@ -3,9 +3,17 @@
 </template>
 
 <script setup lang='ts'>
-import type { EChartsOption } from '../Echarts/useEchart';
-import useChart from "../Echarts/useEchart";
-import { computed, nextTick, onBeforeUnmount, onMounted, Ref, ref } from 'vue';
+
+import type { ECOption } from '../Echarts/baseEcharts';
+import useECharts, { echarts } from "../Echarts/useEcharts";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { DataZoomComponent, DataZoomComponentOption, LegendComponent, LegendComponentOption } from "echarts/components";
+import { LineChart, LineSeriesOption, BarChart, BarSeriesOption } from 'echarts/charts';
+
+
+echarts.use([LineChart, BarChart, DataZoomComponent, LegendComponent])
+type EChartsOption = echarts.ComposeOption<ECOption | LineSeriesOption |
+    BarSeriesOption | DataZoomComponentOption | LegendComponentOption>
 
 const mixRef = ref();
 
@@ -55,7 +63,7 @@ function resize() {
 }
 
 function initChart() {
-    const { setOption, showLoading, hideLoading, getInstance } = useChart(document.getElementById(props.id) as HTMLElement, true, true);// echarts.init(document.getElementById(props.id))
+    const { setOption, showLoading, hideLoading, getInstance } = useECharts(document.getElementById(props.id) as HTMLElement, true, true);// echarts.init(document.getElementById(props.id))
     mixRef.value = getInstance()
     showLoading()
     nextTick(() => {

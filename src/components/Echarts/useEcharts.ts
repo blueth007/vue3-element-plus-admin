@@ -1,14 +1,12 @@
 import { nextTick, onMounted, onUnmounted, Ref, unref, isRef, onBeforeUnmount } from "vue";
-import echarts from "./library";
-import type { EChartsOption } from "echarts";
+import echarts from "./baseEcharts";
+ import { RenderType, ThemeType } from "./echarts-types";
+import type { EChartsOption } from "echarts/types/dist/shared";
 
-import { RenderType, ThemeType } from "./echarts-types";
-
-export default function useChart(
+export default function useEChars(
   elRef: Ref<HTMLDivElement> | HTMLElement,
   autoChartSize = false,
   animation: boolean = false,
-
   theme: ThemeType = ThemeType.Default
 ) {
   // echart实例
@@ -102,4 +100,4 @@ export default function useChart(
   };
 }
 
-export { RenderType, ThemeType, EChartsOption };
+export { RenderType, ThemeType, echarts };

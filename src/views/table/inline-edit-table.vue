@@ -1,13 +1,6 @@
 <template>
   <div class="app-container">
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%"
-    >
+    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
       <el-table-column align="center" label="ID" width="80">
         <template #default="{ row }">
           <span>{{ row.id }}</span>
@@ -29,12 +22,7 @@
       <el-table-column width="120px" label="Importance">
         <template #default="{ row }">
           <span v-if="row.importance">
-            <svg-icon
-              v-for="n in row.importance"
-              :key="n"
-              icon-class="star"
-              class="meta-item__icon"
-            />
+            <svg-icon v-for="n in row.importance" :key="n" icon-class="star" class="meta-item__icon" />
           </span>
         </template>
       </el-table-column>
@@ -51,12 +39,7 @@
         <template #default="{ row }">
           <template v-if="row.edit">
             <el-input v-model="row.title" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              type="warning"
-              @click="cancelEdit(row)"
-            >
+            <el-button class="cancel-btn" size="small" type="warning" @click="cancelEdit(row)">
               <span class="iconify mx-1" data-icon="ep:circle-close"></span>
               cancel
             </el-button>
@@ -67,20 +50,10 @@
 
       <el-table-column align="center" label="Actions" width="120">
         <template #default="{ row }">
-          <el-button
-            v-if="row.edit"
-            type="success"
-            size="small"
-            @click="confirmEdit(row)"
-          >
+          <el-button v-if="row.edit" type="success" size="small" @click="confirmEdit(row)">
             <span class="iconify mx-1" data-icon="ep:circle-check"></span> Ok
           </el-button>
-          <el-button
-            v-else
-            type="primary"
-            size="small"
-            @click="row.edit = !row.edit"
-          >
+          <el-button v-else type="primary" size="small" @click="row.edit = !row.edit">
             <span class="iconify mx-1" data-icon="ep:edit"></span> Edit
           </el-button>
         </template>
@@ -100,12 +73,12 @@ import {
   ElButton,
   ElInput,
   ElTag,
-  ElLoading,
+
 } from "element-plus";
 import type { TagProps } from "element-plus";
 import SvgIcon from "@/components/SvgIcon/index.vue";
+import { vLoading } from 'element-plus/es/components/loading/src/directive'
 
-type Item = { type: TagProps["type"]; label: string };
 const data = reactive({
   list: [],
   listLoading: true,

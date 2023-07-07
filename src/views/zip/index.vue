@@ -1,30 +1,15 @@
 <template>
   <div class="app-container">
-    <el-input
-      v-model="filename"
-      placeholder="Please enter the file name (default file)"
-      style="width: 300px"
-    >
+    <el-input v-model="filename" placeholder="Please enter the file name (default file)" style="width: 300px">
       <template #prepend>
         <span class="iconify el-icon" el-icon data-icon="ep:document"></span>
       </template>
     </el-input>
-    <el-button
-      :loading="downloadLoading"
-      type="primary"
-      @click="handleDownload"
-    >
+    <el-button :loading="downloadLoading" type="primary" @click="handleDownload">
       <span class="iconify el-icon" data-icon="ep:document"></span>
       <span>Export Zip</span>
     </el-button>
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      element-loading-text="拼命加载中"
-      border
-      fit
-      highlight-current-row
-    >
+    <el-table v-loading="listLoading" :data="list" element-loading-text="拼命加载中" border fit highlight-current-row>
       <el-table-column align="center" label="ID" width="95">
         <template #default="scope">
           {{ scope.$index }}
@@ -59,6 +44,7 @@
 import { fetchList } from "@/api/article";
 import { reactive, toRefs } from "vue";
 import { ElButton, ElTable, ElTableColumn, ElTag, ElInput } from "element-plus";
+import { vLoading } from 'element-plus/es/components/loading/src/directive'
 
 const data = reactive({
   list: [] as any[],

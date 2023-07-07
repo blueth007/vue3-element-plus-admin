@@ -6,11 +6,7 @@
     </el-button>
     <template #dropdown>
       <el-dropdown-menu class="no-padding no-border" style="width: 400px">
-        <el-form-item
-          label-width="0px"
-          style="margin-bottom: 0px"
-          prop="source_url"
-        >
+        <el-form-item label-width="0px" style="margin-bottom: 0px" prop="source_url">
           <el-input v-model="source_url" placeholder="Please enter the content">
             <template #prepend> URL </template>
           </el-input>
@@ -27,7 +23,7 @@ import {
   ElDropdown,
   ElDropdownMenu,
   ElInput,
-  ElForm,
+
   ElFormItem,
 } from "element-plus";
 

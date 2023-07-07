@@ -20,8 +20,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/vue3-element-admin": {
-        target:
-          "https://www.fastmock.site/mock/f46350266007e9680ff6459f7412bd60",
+        target: "https://www.fastmock.site/mock/f46350266007e9680ff6459f7412bd60",
         changeOrigin: true,
         ws: true,
         rewrite: (path) => path.replace(/^\/vue3-element-admin/, "vue3_admin"),
@@ -118,18 +117,18 @@ export default defineConfig({
         //   var: "echarts",
         //   path: "https://unpkg.com/echarts@5.4.2/dist/echarts.js",
         // },
-        // {
-        //   name: "element-plus", // 在全局引入
-        //   var: "ElementPlus",
-        //   path: "https://unpkg.com/element-plus@2.3.7/dist/index.full.js",
-        // },
+        {
+          name: "element-plus", // 在全局引入
+          var: "ElementPlus",
+          path: "https://unpkg.com/element-plus@2.3.6/dist/index.full.js",
+        },
       ],
     }), //,和autoImportComponents 组件冲突，须引入vue vue-router vue-demi pinia element-plus(在main.ts全局引入)，子组件中须 import XX 组件。
   ],
   build: {
     sourcemap: false,
     emptyOutDir: true, // 打包时先清空上一次构建生成的目录
-    chunkSizeWarningLimit: 1024, // echarts 包800kb 偏大
+    //chunkSizeWarningLimit: 1024, // echarts 包800kb 偏大
     minify: "terser", //压缩方式
     terserOptions: {
       compress: {
@@ -146,15 +145,12 @@ export default defineConfig({
         chunkFileNames: "assets/js/[name]-[hash].js",
         entryFileNames: "assets/js/[name]-[hash].js",
         assetFileNames: "assets/[ext]/[name]-[hash].[ext]",
-        // manualChunks(id) {
-        //   if (id.includes("node_modules")) {
-        //     return id
-        //       .toString()
-        //       .split("node_modules/")[1]
-        //       .split("/")[0]
-        //       .toString();
-        //   }
-        // },
+        ////下面打包是把modules 所有打包
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            return id.toString().split("node_modules/")[1].split("/")[0].toString();
+          }
+        },
       },
     },
   },

@@ -36,3 +36,6 @@ pugin.js--> #8888
 
 panelGroup 中 svg className 能引入 style 中，但是 svg 不能正确显示大小，外加 div.card-panel-icon
 v-on="$attrs" --> v-bind="$attrs"
+
+element-plus 手动导入后 loading 指令无效
+fixed： import { vLoading } from 'element-plus/es/components/loading/src/directive'

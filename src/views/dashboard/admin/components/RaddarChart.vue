@@ -4,11 +4,16 @@
 
 <script setup lang="ts">
 import { onMounted, Ref, ref, computed, nextTick } from "vue";
-import type { EChartsOption } from "echarts";
-import useChart, { RenderType, ThemeType } from "@/components/Echarts/useEchart";
+import type { ECOption } from "@/components/Echarts/baseEcharts";
+import useECharts, { echarts } from "@/components/Echarts/useEcharts";
+import { LegendComponent, LegendComponentOption } from "echarts/components";
+import { RadarChart, RadarSeriesOption } from 'echarts/charts';
+
+echarts.use([RadarChart, LegendComponent])
+type EChartsOption = echarts.ComposeOption<ECOption | RadarSeriesOption | LegendComponentOption>
 
 const chartEl_radar = ref<HTMLDivElement | null>(null);
-const { setOption, showLoading } = useChart(chartEl_radar as Ref<HTMLDivElement>, true, true, ThemeType.Light);
+const { setOption, showLoading } = useECharts(chartEl_radar as Ref<HTMLDivElement>, true, true);
 
 const props = defineProps({
   className: {

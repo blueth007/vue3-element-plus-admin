@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
 import { nextTick, onMounted, reactive, toRefs } from "vue";
+import { vLoading } from 'element-plus/es/components/loading/src/directive'
 
 const data = reactive({
   article: {} as { title: string; content: string },

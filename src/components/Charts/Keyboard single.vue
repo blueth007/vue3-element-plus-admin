@@ -3,29 +3,38 @@
 </template>
 
 <script setup lang="ts">
-import { ECOption } from "@/components/Echarts/baseEcharts"
-import useECharts, { echarts } from "../Echarts/useEcharts";
+import { reactive, ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import * as echarts from 'echarts/core';
+import {
+    TitleComponent,
+    TooltipComponent,
+    GridComponent,
+    VisualMapComponent,
+    TooltipComponentOption,
+    GridComponentOption,
+} from 'echarts/components';
 import { LineChart, LineSeriesOption, BarChart, BarSeriesOption } from 'echarts/charts';
-import { computed, nextTick, reactive, ref, onMounted, onUnmounted, } from 'vue'
-import { VisualMapComponent, VisualMapComponentOption } from "echarts/components";
-type EChartsOption = echarts.ComposeOption<VisualMapComponentOption | ECOption | LineSeriesOption |
-    BarSeriesOption>
+import { UniversalTransition } from 'echarts/features';
+import { CanvasRenderer } from 'echarts/renderers';
+type EChartsOption = echarts.ComposeOption<
+    | TooltipComponentOption
+    | GridComponentOption
+    | LineSeriesOption
+    | BarSeriesOption
+>;
 
-echarts.use([LineChart, BarChart, VisualMapComponent
-])
-const myChart = ref()
 
-const data = reactive<any>({
-    xAxisData: [],
-    line_data: [],
-    bar_data: [],
+echarts.use([
+    TitleComponent,
+    TooltipComponent,
+    GridComponent,
+    VisualMapComponent,
+    BarChart,
+    LineChart,
+    CanvasRenderer,
+    UniversalTransition
+]);
 
-})
-for (let i = 0; i < 50; i++) {
-    data.xAxisData.push(i)
-    data.line_data.push((Math.sin(i / 5) * (i / 5 - 10) + i / 6) * 5)
-    data.bar_data.push((Math.sin(i / 5) * (i / 5 + 10) + i / 6) * 3)
-}
 
 const props = defineProps({
     className: {
@@ -45,38 +54,27 @@ const props = defineProps({
         default: '200px'
     }
 })
-function initChart() {
-    const { setOption, showLoading, hideLoading, getInstance } = useECharts(document.getElementById(props.id) as HTMLElement, true, true);// echarts.init(document.getElementById(props.id))
-    myChart.value = getInstance()
-    showLoading()
-    nextTick(() => {
-        setOption(option.value)
-        hideLoading()
-    })
-}
+const myChart = ref()
 
-onMounted(() => {
-    initChart()
-    window.addEventListener("resize", eResize);
-});
-onUnmounted(() => {
-    if (!myChart) {
-        return
-    }
-    // myChart.value?.dispose()
-    myChart.value = null
-    window.removeEventListener("resize", eResize);
+const data = reactive<any>({
+    xAxisData: [],
+    line_data: [],
+    bar_data: [],
+
 })
-
-function resize() {
-    myChart.value?.resize()
+for (let i = 0; i < 50; i++) {
+    data.xAxisData.push(i)
+    data.line_data.push((Math.sin(i / 5) * (i / 5 - 10) + i / 6) * 5)
+    data.bar_data.push((Math.sin(i / 5) * (i / 5 + 10) + i / 6) * 3)
 }
+
 const option = computed<EChartsOption>(() => ({
     backgroundColor: '#08263a',
     grid: {
         left: '5%',
         right: '5%'
     },
+
     tooltip: {},
     xAxis: [{
         show: false,
@@ -129,7 +127,7 @@ const option = computed<EChartsOption>(() => ({
                 shadowBlur: 3,
                 shadowColor: '#111'
             },
-            animationDelay: function (idx) {
+            animationDelay: function (idx: number) {
                 return idx * 10;
             }
         },
@@ -161,7 +159,7 @@ const option = computed<EChartsOption>(() => ({
             itemStyle: {
                 borderRadius: 5
             },
-            animationDelay: function (idx) {
+            animationDelay: function (idx: number) {
                 return idx * 10 + 100;
             }
         }
@@ -173,6 +171,30 @@ const option = computed<EChartsOption>(() => ({
 }))
 
 
+onMounted(() => {
+    initChart()
+    window.addEventListener("resize", eResize);
+})
+onUnmounted(() => {
+    if (!myChart) {
+        return
+    }
+    // myChart.value?.dispose()
+    myChart.value = null
+    window.removeEventListener("resize", eResize);
+})
+function initChart() {
+    var chartDom = document.getElementById(props.id);
+    myChart.value = echarts.init(chartDom as HTMLElement);
+
+    myChart.value.showLoading();
+    nextTick(() => {
+        myChart.value.hideLoading();
+        myChart.value.setOption(option.value);
+    })
+
+}
+
 //清空数据再次渲染
 function eResize() {
     myChart.value?.clear();
@@ -181,3 +203,5 @@ function eResize() {
 }
 
 </script>
+
+<style scoped lang="scss"></style>

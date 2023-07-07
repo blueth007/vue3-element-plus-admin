@@ -13,7 +13,7 @@
             href="#/example/create">create Article</a></strong></p>
     </aside>
     <div>
-      <tinymce v-model="content" :height="300" @getContent="getContent" />
+      <tinymce v-model="content" :height="600" @getContent="getContent" />
     </div>
     <div class="editor-content" v-html="content"></div>
   </div>

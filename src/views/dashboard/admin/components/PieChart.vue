@@ -4,11 +4,16 @@
 
 <script setup lang="ts">
 import { onMounted, Ref, ref, computed, nextTick } from "vue";
-import type { EChartsOption } from "echarts";
-import useChart, { RenderType, ThemeType } from "@/components/Echarts/useEchart";
+import type { ECOption } from "@/components/Echarts/baseEcharts";
+import useECharts, { echarts } from "@/components/Echarts/useEcharts";
+import { LegendComponent, LegendComponentOption } from "echarts/components";
+import { PieChart, PieSeriesOption } from 'echarts/charts';
+
+echarts.use([PieChart, LegendComponent]);
+type EChartsOption = echarts.ComposeOption<ECOption | PieSeriesOption | LegendComponentOption>
 
 const chartEl_pie = ref<HTMLDivElement | null>(null);
-const { setOption, showLoading } = useChart(chartEl_pie as Ref<HTMLDivElement>, true, true,  ThemeType.Light);
+const { setOption, showLoading } = useECharts(chartEl_pie as Ref<HTMLDivElement>, true, true);
 
 const props = defineProps({
   className: {
@@ -26,6 +31,12 @@ const props = defineProps({
 });
 
 const option = computed<EChartsOption>(() => ({
+  title: {
+    text: 'Referer of a Website',
+    subtext: 'Fake Data',
+    left: 'center'
+  },
+
   tooltip: {
     trigger: "item",
     formatter: "{a} <br/>{b} : {c} ({d}%)",

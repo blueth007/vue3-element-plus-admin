@@ -79,7 +79,7 @@ import {
   ElInput,
   ElTableColumn,
 } from "element-plus";
-
+import { vLoading } from 'element-plus/es/components/loading/src/directive'
 import { onBeforeMount, reactive, ref, toRefs } from "vue";
 const multipleTable = ref<InstanceType<typeof ElTable>>();
 
