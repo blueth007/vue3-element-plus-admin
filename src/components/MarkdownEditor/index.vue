@@ -1,7 +1,6 @@
 <template>
   <div>
     <div :id="id"></div>
-    <el-button @click="getHTML">getHTML</el-button>
   </div>
 </template>
 
@@ -10,14 +9,12 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 import "@toast-ui/editor/dist/i18n/zh-cn";
 import Editor, {
   EditorCore,
-  EditorOptions,
   EditorType,
 } from "@toast-ui/editor";
 import defaultOptions from "./default-options";
-import { ElButton } from "element-plus";
+
 import {
   computed,
-  nextTick,
   onMounted,
   onUnmounted,
   PropType,
@@ -152,7 +149,7 @@ function getHTML() {
   // console.log(data.editor!.getHTML())
   return (
     document.getElementById(props.id)?.querySelector(".toastui-editor-contents")
-      ?.innerHTML || "111"
+      ?.outerHTML || ""
   );
   // return data.editor!.getHTML(); //Error: Uncaught RangeError: Applying a mismatched transaction
 }

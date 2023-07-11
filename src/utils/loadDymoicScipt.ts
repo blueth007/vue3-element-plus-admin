@@ -1,11 +1,5 @@
 let callbacks: Function[] | any = [];
 
-function loadedTinymce() {
-  // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2144
-  // check is successfully downloaded script
-  return (<any>window).window.tinymce;
-}
-
 const dynamicLoadScript = (windowArgs: any, src: string, callback: Function) => {
   const existingScript = document.getElementById(src);
   const cb = callback || function () {};

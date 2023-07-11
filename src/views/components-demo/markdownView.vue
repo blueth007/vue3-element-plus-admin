@@ -20,23 +20,22 @@
 
     <div class="editor-container">
       <el-tag class="tag-title"> Markdown Mode: </el-tag>
-      <markdownEditor v-model="content2" key="2" :options="{ hideModeSwitch: true, previewStyle: 'tab' }"
-        height="200px" />
+      <markdownEditor v-model="content2" :options="{ hideModeSwitch: true, previewStyle: 'tab' }" height="200px" />
     </div>
 
     <div class="editor-container">
       <el-tag class="tag-title"> Customize Toolbar: </el-tag>
-      <markdownEditor v-model="content3" k :options="{ toolbarItems: [['heading'], ['bold'], ['italic']] }" />
+      <markdownEditor v-model="content3" :options="{ toolbarItems: [['heading'], ['bold'], ['italic']] }" />
     </div>
 
     <div class="editor-container">
       <el-tag class="tag-title"> I18n: </el-tag>
       <el-alert :closable="false" title="You can change the language of the admin system to see the effect"
         type="success" />
-      <markdownEditor v-model="content4" :language="language" height="300px" />
+      <markdownEditor v-model="content4" :language="language" height="300px" ref="markdownEditorRef" />
     </div>
 
-    <el-button style="margin-top: 80px" type="primary" @click="getHtml">
+    <el-button style="margin-top: 80px" type="primary" @click="getContentHTML">
       <span class="iconify el-icon" data-icon="ep:document"></span>
       <span>Get HTML</span>
     </el-button>
@@ -46,9 +45,11 @@
 
 <script lang="ts" setup>
 import { computed, reactive, ref, toRefs } from "vue";
-// import markdownEditor from "@/components/MarkdownEditor/dyEditor.vue";
+
 import markdownEditor from "@/components/MarkdownEditor/index.vue";
 import { ElButton, ElTag, ElAlert } from "element-plus";
+
+const markdownEditorRef = ref()
 const content = `
 **This is test**
 
@@ -77,10 +78,10 @@ const { content1, content2, content3, content4, html } = toRefs(data);
 const language = computed(() => {
   return data.languageTypeList["zh"];
 });
-
-function getHtml() {
-  // data.html = markdownEditor_ref.value.getHTML();
+const getContentHTML = () => {
+  html.value = markdownEditorRef.value?.getHTML();
 }
+
 </script>
 
 <style scoped>

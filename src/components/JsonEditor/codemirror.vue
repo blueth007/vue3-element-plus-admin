@@ -4,9 +4,7 @@
 
 <script lang="ts" setup>
 import { basicSetup, EditorView } from "codemirror";
-
-import { javascript } from "@codemirror/lang-javascript";
-import { oneDarkTheme, oneDark } from "@codemirror/theme-one-dark";
+import { oneDark } from "@codemirror/theme-one-dark";
 import { json } from "@codemirror/lang-json";
 import { onMounted, ref } from "vue";
 
@@ -49,12 +47,14 @@ const initEditor = () => {
 }`;
     // 自定义主题
     const myTheme = EditorView.theme({
+
         "&": {
             color: "white",
-            backgroundColor: "#034"
+            backgroundColor: " #112435"
         },
         ".cm-content": {
-            caretColor: "#0e9"
+            caretColor: "#0e9",
+            // color: "#F08047"
         },
         "&.cm-focused .cm-cursor": {
             borderLeftColor: "#0e9"
@@ -64,10 +64,18 @@ const initEditor = () => {
             backgroundColor: "#074"
         },
         ".cm-gutters": {
-            backgroundColor: "#045",
+            backgroundColor: "#1F4661",
             color: "#ddd",
             border: "none"
-        }
+        },
+
+        ".cm-o-replacement": {
+            display: "inline-block",
+            width: ".5em",
+            height: ".5em",
+            borderRadius: ".25em"
+        },
+
     }, { dark: true })
     // const startState = EditorState.create({
     //     doc: jsonString,
@@ -77,10 +85,10 @@ const initEditor = () => {
         editor_View.value = new EditorView({
             // state: startState,
             doc: props.modelValue || jsonString,
-            extensions: [basicSetup, oneDark, json(), javascript(),
+            extensions: [basicSetup, oneDark, json(),
                 EditorView.updateListener.of(function (e) {
                     //监听事件变化
-                    // console.log("update：", e.state.doc.toString());
+                    console.log("update：", e.state.doc.toString());
                 })],
             parent: editorRef.value,
         });

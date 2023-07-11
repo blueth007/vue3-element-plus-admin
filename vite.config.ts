@@ -109,14 +109,8 @@ export default defineConfig({
           var: "VueRouter",
           path: "https://unpkg.com/vue-router@4.2.3/dist/vue-router.global.js",
         },
-
         autoComplete("axios"),
         autoComplete("xlsx"), // 可以正常引入显示
-        // {
-        //   name: "echarts", // 设法全局引入或减小体积
-        //   var: "echarts",
-        //   path: "https://unpkg.com/echarts@5.4.2/dist/echarts.js",
-        // },
         {
           name: "element-plus", // 在全局引入
           var: "ElementPlus",
